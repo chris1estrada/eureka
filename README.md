@@ -1,0 +1,2 @@
+# eureka
+Senior Project - Eureka!
