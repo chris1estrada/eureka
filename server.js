@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
 app.get("/api/v1/accounts/:account_id", (req, res) => {
   const connection = mysql.createConnection({
     host: process.env.DB_HOST,
-    port: 33066,
+    port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASS
 
