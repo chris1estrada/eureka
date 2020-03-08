@@ -2,18 +2,18 @@
 Senior Project - Eureka!
 
 ## Frontend
-Chris Estrada
-Mateusz Koza
-Matthew Tam
+* Chris Estrada
+* Mateusz Koza
+* Matthew Tam
 
 ## Sever/API
-Chris Ancheta
-Jaxon Terrell
+* Chris Ancheta
+* Jaxon Terrell
 
 ## Database
-Ryan Hardin
-Michael Jewell
-Denisha Pimentel
+* Ryan Hardin
+* Michael Jewell
+* Denisha Pimentel
 
 ### To run: 
 1. install dependencies for server and client
