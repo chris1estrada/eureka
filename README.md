@@ -1,7 +1,7 @@
 # eureka
 Senior Project - Eureka!
 
-To run: 
+###To run: 
 *install dependencies for server and client
 ..*npm install from root directory
 ..*npm install from client directory
