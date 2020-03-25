@@ -108,7 +108,7 @@ const Header = () => {
             aria-label="information"
             aria-controls="info-menu-appbar"
             aria-haspopup="true"
-            onClick={handleInfoMenu}
+            onClick={() => { return false }}
             color="inherit"
           >
             <InfoOutlined />
