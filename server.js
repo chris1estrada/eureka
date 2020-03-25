@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === "production") {
 
 const accountRoutes = require("./routes/accounts");
 app.use('/api/v1/accounts', accountRoutes)
+
 const businessRoutes = require("./routes/businesses");
 app.use('/api/v1/businesses', businessRoutes);
 

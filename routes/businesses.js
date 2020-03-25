@@ -10,10 +10,6 @@ const db = require('../db')
 
 router.get('/', (request, response) => {
   // send back dummy data array of objects with data for homepage
-  db.query("select * from businesses", (error, results) => {
-    if (error) throw error;
-    response.send(results)
-  })
 })
 
 router.get('/business_id', (request, response) => {
