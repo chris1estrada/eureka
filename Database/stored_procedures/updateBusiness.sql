@@ -1,5 +1,5 @@
 CREATE DEFINER=`administrator`@`localhost` PROCEDURE `updateBusiness`(
-	IN BID INT(11), IN `name` VARCHAR(255), IN address VARCHAR(255), IN lat FLOAT, IN `long` FLOAT, 
+    IN BID INT(11), IN `name` VARCHAR(255), IN address VARCHAR(255), IN lat FLOAT, IN `long` FLOAT, 
     IN menu VARCHAR(255), IN cuisine VARCHAR(45), IN `description` VARCHAR(1000), IN isAdult TINYINT(4))
 BEGIN
 	# Procedure that receives new data for an existing business and updates entrys that are not null
