@@ -17,6 +17,6 @@ BEGIN
 		VALUES('Limited', start_datetime, end_datetime, @DID);
 	ELSEIF deal_type = 'Recurring' THEN
 		INSERT INTO deal_hours(type, weekday, start_time, end_time, deal_id) 
-		VALUES('Recurringt', day_deal, start_time, end_time, @DID);
+		VALUES('Recurring', day_deal, start_time, end_time, @DID);
     END IF;
 END
