@@ -21,7 +21,7 @@ export const DisplayMapFC = ( props ) => {
     const defaultLayers = platform.createDefaultLayers();
     const hMap = new H.Map(mapRef.current, defaultLayers.vector.normal.map, {
       center: { lat: props.coordinates.lat, lng: props.coordinates.long },
-      zoom: 4,
+      zoom: 15,
       pixelRatio: window.devicePixelRatio || 1
     });
     console.log(props.coordinates.lat)
