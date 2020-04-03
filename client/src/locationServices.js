@@ -6,9 +6,8 @@
   copy and paste the following code:
 
   const [coords, setCoords] = useState({
-    //Null Island
-    lat: 0,
-    long: 0
+    lat: false,
+    long: false
   })
 
   useEffect(() => {
