@@ -12,7 +12,7 @@ export default class Location extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        value: '0,0', // Null Island
+        value: [0, 0], // Null Island
         error: null,
       }
     }
@@ -26,7 +26,7 @@ export default class Location extends Component {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             this.setState({
-              value: position.coords.latitude + ',' + position.coords.longitude,
+              value: [position.coords.latitude, position.coords.longitude],
               error: null,
             });
           },
@@ -47,14 +47,9 @@ export default class Location extends Component {
     }
   
     // The JSX definition for how to render this component on the page.  
-    // In this case, it's a simple input field for new todo items.
+    // This render function returns an array formatted like this:
+    // [latitude, longitude]
     render() {
-      return (
-              <input
-                className="new-todo"
-                value={ this.state.value }
-                onChange={ evt => this.changeLocation(evt) }
-                />
-      );
-    }
+      return this.state.value;
+      }
   }
