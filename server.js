@@ -29,6 +29,9 @@ app.use('/api/v1/accounts', accountRoutes)
 const businessRoutes = require("./routes/businesses");
 app.use('/api/v1/businesses', businessRoutes);
 
+const loginRoute = require("./routes/login");
+app.use('/login', loginRoute)
+
 app.listen(port, error => {
   if (error) throw error;
   console.log("Server running on port " + port);
