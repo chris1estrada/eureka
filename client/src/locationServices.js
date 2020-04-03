@@ -5,17 +5,17 @@
   To use this function in another component,
   copy and paste the following code:
 
-  const [state, setState] = useState({
+  const [coords, setCoords] = useState({
     //Null Island
     lat: 0,
     long: 0
   })
 
   useEffect(() => {
-    getLocation.then((result) => {
-      setState({ lat: result.lat, long: result.long })
+    getLocation.then((results) => {
+      setCoords({ lat: results.lat, long: results.long })
     })
-    console.log(state.lat + "____" + state.long);
+    console.log(coords.lat + "____" + coords.long);
   }, [])
 */
 
@@ -23,7 +23,6 @@ const getLocation = new Promise((resolve, reject) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
-        console.log(latitude, longitude)
         resolve({ lat: latitude, long: longitude })
       }
     )
