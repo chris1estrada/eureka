@@ -1,70 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Component } from 'react';
+import getLocation from '../../locationServices.js'
+import {DisplayMapFC} from '../../components/map/DisplayMapClass';
 
-// This class definition is a React.Component so that we
-// can use it in multiple places for the app.
+// Homepage Variables
+const HomePage = () => { 
 
-class Location extends Component {
+  // Getting Location
+  const [coords, setCoords] = useState({
+    lat: false,
+    long: false
+  })
 
-  // The constructor takes properties defined as element attributes
-  // defined in JSX along with an initial default value for state.
+  useEffect(() => {
+    getLocation.then((results) => {
+      setCoords({ lat: results.lat, long: results.long })
+    })
+    console.log(coords.lat + "____" + coords.long);
+  }, [])
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: '0,0', // Null Island
-      error: null,
-    }
-  }
 
-  // When the component is rendered to the DOM for the first time
-  // such as at page load we call the Geolocation API to determine
-  // a latitude and longitude for the browser
-
-  componentDidMount() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.setState({
-            value: position.coords.latitude + ',' + position.coords.longitude,
-            error: null,
-          });
-        },
-        (error) => this.setState(
-          {error: error.message}
-        )
-      );
-    }
-  }
-
-// Respond to user input with event callback
-  
-changeLocation(evt) {
-    this.setState({
-        value: evt.target.value,
-      }
-    )
-  }
-
-  // The JSX definition for how to render this component on the page.  
-  // In this case, it's a simple input field for new todo items.
-  render() {
-    return (
-            <input
-              className="new-todo"
-              value={ this.state.value }
-              onChange={ evt => this.changeLocation(evt) }
-              />
-    );
-  }
-}
-
-const HomePage = () => {
-  return (
+  return (  
     <div>
-      <Location />
-      <h1>HOME PAGE</h1>
+      { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
       <Link to={`/details/1`}>Business 1</Link>
       <Link to={`/details/2`}>Business 2</Link>
     </div>
