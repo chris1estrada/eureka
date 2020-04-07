@@ -23,8 +23,6 @@ const HomePage = () => {
   return (  
     <div>
       { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
-      <Link to={`/details/1`}>Business 1</Link>
-      <Link to={`/details/2`}>Business 2</Link>
     </div>
   );
 };
