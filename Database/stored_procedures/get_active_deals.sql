@@ -7,5 +7,5 @@ SET @time_zone = tz;
     JOIN deal_hours dh USING (deal_id)
     JOIN business_deals bd USING (deal_id)
     JOIN businesses b USING (business_id)
-	WHERE bd.business_id = 10 AND dh.end_datetime > NOW();
+	WHERE bd.business_id = BID AND dh.end_datetime > NOW();
 END
