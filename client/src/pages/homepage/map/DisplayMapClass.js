@@ -26,7 +26,10 @@ export const DisplayMapFC = ( props ) => {
       center: coords,
       zoom: 15,
       pixelRatio: window.devicePixelRatio || 1
-    }); 
+    });
+
+    // add a resize listener to make sure that the map occupies the whole container
+    window.addEventListener('resize', () => hMap.getViewPort().resize());
 
     // Define a variable holding SVG mark-up that defines an icon image:
     const svgMarkup = '<svg width="24" height="24" ' +
@@ -54,5 +57,5 @@ export const DisplayMapFC = ( props ) => {
     };
   }, [mapRef]); // This will run this hook every time this ref is updated
 
-  return <div className="map" ref={mapRef} style={{ height: "50vh" }} />;
+  return <div className="map" ref={mapRef} style={{ height: "calc(100vh - (30vh + 56px))" }} />;
 };

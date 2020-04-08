@@ -23,8 +23,12 @@ export default class BusinessList extends Component {
             <div 
                 className="BusinessLlist" 
                 style={{
+                    position:  "fixed",
+                    bottom:    0,
                     overflowY: "scroll",
-                    height:    "calc(50vh - 64px)"
+                    height:    "calc(50vh - 64px)",
+                    maxHeight: "30vh",
+                    width:     "100vw"
                 }}
             >
                 <BusinessCard business={business} />
