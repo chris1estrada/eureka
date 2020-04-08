@@ -19,6 +19,32 @@ const HomePage = () => {
   }, [])
 
 // Example mock data for proper formatting
+const businesses =[
+  {
+    name:         "Burger Barn",
+    address:      "222 State St, Philadelphia, PA, 19146",
+    phone:        "(609) 456-7890",
+    hours:        "11am - 12am Sunday - Thursday",
+    hours2:       "10am - 2am Friday - Saturday",
+    tags:         "American, Pub",
+    description:  "This is the description of the business.",
+    dealsTime:    "Monday 3pm - 6pm",
+    deals:        "$2 Tacos $3 Corona",
+    promosTime:   "Tuesday 3pm - 6pm",
+    promos:       "1/2 price wings $2 domestics"
+  },
+
+  {
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    phone:        "(856) 243-5902",
+    hours:        "10am - 11pm Sunday - Saturday",
+    hours2:       "10am - 9pm Sunday",
+    tags:         "Mexican",
+    description:  "This is the description of the business.",
+  },
+]
+/*
 let business = {
   name: "Burger Barn",
   address: "222 State St, Philadelphia, PA, 19146",
@@ -32,46 +58,16 @@ let business = {
   promosTime: "Tuesday 3pm - 6pm",
   promos: "1/2 price wings $2 domestics"
 }
+*/
 
   return (  
-    <div>
-          <div 
-            className="DesktopBusinessList" 
-            style={{
-                position:  "absolute",
-                overflowY: "scroll",
-                height:    "calc(100vh - 64px)",
-                width:     "300px",
-                zIndex:    "2",
-            }}
-        >
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-            <BusinessCard business={business} />
-        </div>
-        { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
-        <div 
-            className="MobileBusinessList" 
-            style={{
-                overflowY: "scroll",
-                height:    "30vh",
-            }}
-        >
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
-          <BusinessCard business={business} />
+    <div className="HomepageComponent">
+      <div className="DesktopBusinessList">
+      { businesses.map((business) => <BusinessCard business={business} /> )}
+      </div>
+      { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
+      <div className="MobileBusinessList">
+      { businesses.map((business) => <BusinessCard business={business} /> )}
       </div>
     </div>
   );

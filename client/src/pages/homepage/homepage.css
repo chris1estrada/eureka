@@ -17,14 +17,28 @@ html, body {
 }
 
 .map {
-    height:     calc(100vh - 64px);
-    width:      calc(100vw - 300px);
+    display:    inline-block;
     position:   absolute;
-    right:      0px;
+    width:      calc(100vw - 300px);
+    height:     calc(100vh - 64px);
 }
 
 .MobileBusinessList {
     display:    none;
+    height:     30vh;
+    overflow-y: scroll;
+}
+
+.DesktopBusinessList {
+    display:    inline-block;
+    width:      300px;
+    height:     calc(100vh - 64px);
+    overflow-y: scroll;
+}
+
+.HomepageComponent {
+    position:   relative;
+    height:     calc(100vh - 64px);
 }
 
 @media only screen and (max-width: 600px) {
@@ -33,16 +47,22 @@ html, body {
     }
 
     .map {
-        height:     calc(100vh - (30vh + 56px));
-        width:      100vw;
+        display:    block;
         position:   static;
+        width:      100vw;
+        height:     calc(100vh - (30vh + 56px));
     }
 
     .MobileBusinessList {
-        display:    block;
+        display: block;
     }
 
     .DesktopBusinessList {
-        display:    none;
+        display: none;
     }
+
+    .HomepageComponent {
+        height: calc(100vh - 56px);
+    }
+    
 }
