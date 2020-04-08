@@ -16,7 +16,6 @@ const HomePage = () => {
     getLocation.then((results) => {
       setCoords({ lat: results.lat, long: results.long })
     })
-    console.log(coords.lat + "____" + coords.long);
   }, [])
 
 // Example mock data for proper formatting
