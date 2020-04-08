@@ -12,12 +12,19 @@
     1080px height monitor.
 */
 html, body {
-    max-width: 100%;
+    max-width:  100%;
     overflow-x: hidden;
 }
 
 .map {
-    height: calc(100vh - (30vh + 64px));
+    height:     calc(100vh - 64px);
+    width:      calc(100vw - 300px);
+    position:   absolute;
+    right:      0px;
+}
+
+.MobileBusinessList {
+    display:    none;
 }
 
 @media only screen and (max-width: 600px) {
@@ -26,6 +33,16 @@ html, body {
     }
 
     .map {
-        height: calc(100vh - (30vh + 56px));
+        height:     calc(100vh - (30vh + 56px));
+        width:      100vw;
+        position:   static;
+    }
+
+    .MobileBusinessList {
+        display:    block;
+    }
+
+    .DesktopBusinessList {
+        display:    none;
     }
 }

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import getLocation from '../../locationServices.js'
 import {DisplayMapFC} from './map/DisplayMapClass';
-import BusinessList from './businesslist/businessList.component';
-import { Card, CardContent, Typography, Fab } from '@material-ui/core';
+import BusinessCard from './businessCard.component';
 import './homepage.css';
 
-// Homepage Variables
 const HomePage = () => { 
 
   // Getting Location
@@ -36,12 +34,46 @@ let business = {
   promos: "1/2 price wings $2 domestics"
 }
 
-// { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
-
   return (  
     <div>
+          <div 
+            className="DesktopBusinessList" 
+            style={{
+                position:  "absolute",
+                overflowY: "scroll",
+                height:    "calc(100vh - 64px)",
+                width:     "300px",
+                zIndex:    "2",
+            }}
+        >
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+            <BusinessCard business={business} />
+        </div>
         { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
-        <BusinessList />
+        <div 
+            className="MobileBusinessList" 
+            style={{
+                overflowY: "scroll",
+                height:    "30vh",
+            }}
+        >
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+          <BusinessCard business={business} />
+      </div>
     </div>
   );
 };
