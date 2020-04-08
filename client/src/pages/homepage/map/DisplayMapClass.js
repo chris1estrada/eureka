@@ -6,8 +6,11 @@ export const DisplayMapFC = ( props ) => {
   // Create a reference to the HTML element we want to put the map on
   const mapRef = React.useRef(null);
 
+  // Initializing coordinates to Null Island
+  let coords = {lat: 0, lng: 0}
+
   // Loading coordinates from props:
-  const coords = {lat: props.coordinates.lat, lng: props.coordinates.long}
+  coords = {lat: props.coordinates.lat, lng: props.coordinates.long}
 
   /**
    * Create the map instance
