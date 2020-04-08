@@ -6,6 +6,9 @@ export const DisplayMapFC = ( props ) => {
   // Create a reference to the HTML element we want to put the map on
   const mapRef = React.useRef(null);
 
+  // Loading coordinates from props:
+  const coords = {lat: props.coordinates.lat, lng: props.coordinates.long}
+
   /**
    * Create the map instance
    * While `useEffect` could also be used here, `useLayoutEffect` will render
@@ -20,12 +23,25 @@ export const DisplayMapFC = ( props ) => {
     });
     const defaultLayers = platform.createDefaultLayers();
     const hMap = new H.Map(mapRef.current, defaultLayers.vector.normal.map, {
-      center: { lat: props.coordinates.lat, lng: props.coordinates.long },
+      center: coords,
       zoom: 15,
       pixelRatio: window.devicePixelRatio || 1
     }); 
-    console.log(props.coordinates.lat)
-    console.log(props.coordinates.long)
+
+    // Define a variable holding SVG mark-up that defines an icon image:
+    const svgMarkup = '<svg width="24" height="24" ' +
+    'xmlns="http://www.w3.org/2000/svg">' +
+    '<rect stroke="white" fill="#1b468d" x="1" y="1" width="22" ' +
+    'height="22" /><text x="12" y="18" font-size="12pt" ' +
+    'font-family="Arial" font-weight="bold" text-anchor="middle" ' +
+    'fill="white">H</text></svg>';
+
+    // Create an icon and a marker:
+    const icon = new H.map.Icon("/Google_Maps_pin.svg"),
+    marker = new H.map.Marker(coords, {icon: icon});
+
+    // Add the marker to the map:
+    hMap.addObject(marker);
 
     const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(hMap));
 
