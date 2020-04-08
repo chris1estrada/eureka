@@ -57,5 +57,5 @@ export const DisplayMapFC = ( props ) => {
     };
   }, [mapRef]); // This will run this hook every time this ref is updated
 
-  return <div className="map" ref={mapRef} style={{ height: "calc(100vh - (30vh + 56px))" }} />;
+  return <div className="map" ref={mapRef} />;
 };
