@@ -23,7 +23,7 @@ export const DisplayMapFC = ( props ) => {
       center: { lat: props.coordinates.lat, lng: props.coordinates.long },
       zoom: 15,
       pixelRatio: window.devicePixelRatio || 1
-    });
+    }); 
     console.log(props.coordinates.lat)
     console.log(props.coordinates.long)
 
@@ -38,5 +38,5 @@ export const DisplayMapFC = ( props ) => {
     };
   }, [mapRef]); // This will run this hook every time this ref is updated
 
-  return <div className="map" ref={mapRef} style={{ height: "calc(100vh - 81px)" }} />;
+  return <div className="map" ref={mapRef} style={{ height: "50vh" }} />;
 };
