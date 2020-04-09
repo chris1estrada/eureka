@@ -2,41 +2,39 @@
  * 
  * 
  * @module Route callbacks for consumer-user facing business info
- * @author Chris Ancheta
+ * @author Jaxon Terrell
  */
-const express = require('express')
-const router = express.Router()
-const db = require('../db')
+const express = require('express');
+const router = express.Router();
+const db = require('../db');
+const path = require('path');
+//stored the SQL procs in an array for modularity if any procedures need to be added later
+let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
 
 router.get('/', (request, response) => {
   // send back dummy data array of objects with data for homepage
-  response.json([
-    {
-      name: "Burger Barn",
-      image: 'https://senior-project-eureka.s3.amazonaws.com/97/photos/1585781577719.jpeg',
-      hasActiveDeals: false,
-      lat: 39.465591,
-      long: -75.006654
-    },
-    {
-      name: "Bagel University",
-      image: 'https://senior-project-eureka.s3.amazonaws.com/97/photos/1585781577719.jpeg',
-      hasActiveDeals: false,
-      lat: 39.464895,
-      long: -75.007373
-    },
-    {
-      name: "Magnolia",
-      image: 'https://senior-project-eureka.s3.amazonaws.com/97/photos/1585781577719.jpeg',
-      hasActiveDeals: true,
-      lat: 39.464912,
-      long: -75.006268
-    },
-  ])
+
 })
 
-router.get('/business_id', (request, response) => {
-  // send back info for a particular business based on their unique business id
-})
+router.get('/:business_id', (request, response) => {
+  //send back info for a particular business based on their unique business id
+  var jsonArray = [];
+  for (let step = 0; step <= sqlArray.length-1; step++) {
+    db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
+      if(error) {
+        return console.error(error.message);
+      }
+      //makes sure we only get a response once we've executed the last SQL proc 
+      if(step == (sqlArray.length-1)) {
+        jsonArray.push(results);
+        response.json(jsonArray);
+        console.log(jsonArray);
+      }
+      else {
+        jsonArray.push(results);
+      }
+    });  
+  };
+});
 
 module.exports = router
