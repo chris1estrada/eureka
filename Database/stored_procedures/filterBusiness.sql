@@ -5,8 +5,8 @@ BEGIN
     #Both Filters active
 	IF(filter1 IS NOT NULL AND filter2 IS NOT NULL) THEN
 		SELECT
-			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', (
-			3959 * acos (
+			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', b.lat, b.long, get_image(b.business_id) as 'image',
+            (3959 * acos (
 			cos ( radians( uLat ) )
 			* cos( radians( `lat` ) )
 			* cos( radians( `long` ) - radians( uLong ) )
@@ -22,8 +22,8 @@ BEGIN
 	#Only filter1 active
 	ELSEIF(filter1 IS NOT NULL) THEN
 		SELECT
-			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', (
-			3959 * acos (
+			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', b.lat, b.long, get_image(b.business_id) as 'image',
+            (3959 * acos (
 			cos ( radians( uLat ) )
 			* cos( radians( `lat` ) )
 			* cos( radians( `long` ) - radians( uLong ) )
@@ -39,8 +39,8 @@ BEGIN
 	#Only filter2 active
 	ELSEIF(filter2 IS NOT NULL) THEN
 		SELECT
-			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', (
-			3959 * acos (
+			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', b.lat, b.long, get_image(b.business_id) as 'image',
+            (3959 * acos (
 			cos ( radians( uLat ) )
 			* cos( radians( `lat` ) )
 			* cos( radians( `long` ) - radians( uLong ) )
@@ -56,8 +56,8 @@ BEGIN
 	#No filters
 	ELSE
 		SELECT
-			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', (
-			3959 * acos (
+			b.business_id, b.name, b.address, b.cuisine, if(is_open(b.business_id), 'true', 'false') as 'open', b.lat, b.long, get_image(b.business_id) as 'image',
+            (3959 * acos (
 			cos ( radians( uLat ) )
 			* cos( radians( `lat` ) )
 			* cos( radians( `long` ) - radians( uLong ) )
