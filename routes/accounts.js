@@ -206,7 +206,16 @@ router.get('/businesses/:business_id', (request, response) => {
 
 router.get('/users/:user_id', (request, response) => {
   // send back info for a particular user based on their unique user id
-})
+  let userInfo = 'call selectUser(?)';
+  db.query(userInfo, request.params.user_id, (error, [[results]]) => {
+    if(error) {
+      return console.error(error.message);
+    };
+    //makes sure we only get a response once we've executed the last SQL proc 
+    response.json(results);
+  });
+});
+
 
 router.put('/businesses/:business_id', (request, response) => {
   // update info for a particular business based on their unique business id
