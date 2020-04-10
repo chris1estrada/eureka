@@ -51,7 +51,10 @@ export const DisplayMapFC = ( props ) => {
 
     const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(hMap));
 
+    // Create the default UI components
     const ui = H.ui.UI.createDefault(hMap, defaultLayers);
+    // Set the UI unit system to imperial measurement
+    ui.setUnitSystem(H.ui.UnitSystem.IMPERIAL);
 
     // This will act as a cleanup to run once this hook runs again.
     // This includes when the component un-mounts
