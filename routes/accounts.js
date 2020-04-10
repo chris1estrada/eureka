@@ -184,6 +184,24 @@ router.post(
 
 router.get('/businesses/:business_id', (request, response) => {
   // send back info for a particular business based on their unique business id
+  let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
+  var jsonArray = [];
+  for (let step = 0; step <= sqlArray.length-1; step++) {
+    db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
+      if(error) {
+        return console.error(error.message);
+      }
+      //makes sure we only get a response once we've executed the last SQL proc 
+      if(step == (sqlArray.length-1)) {
+        jsonArray.push(results);
+        response.json(jsonArray);
+        console.log(jsonArray);
+      }
+      else {
+        jsonArray.push(results);
+      }
+    });  
+  };
 })
 
 router.get('/users/:user_id', (request, response) => {
