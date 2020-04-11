@@ -11,12 +11,14 @@ const router = express.Router()
 const path = require('path')
 // for validating and sanitizing request data
 const { body, validationResult } = require('express-validator')
+
 // for handling file uploads and multipart-form data
 const multer = require('multer')
 const { upload } = require('../middlewares/multer')
 
 const db = require('../db');
 const { createHash } = require('../utils/auth')
+const { checkToken } = require('../middlewares/auth')
 
 
 /**
@@ -182,7 +184,7 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', (request, response) => {
+router.get('/businesses/:business_id', checkToken, (request, response) => {
   // send back info for a particular business based on their unique business id
   let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
   var jsonArray = [];
@@ -204,15 +206,15 @@ router.get('/businesses/:business_id', (request, response) => {
   };
 })
 
-router.get('/users/:user_id', (request, response) => {
+router.get('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular user based on their unique user id
 })
 
-router.put('/businesses/:business_id', (request, response) => {
+router.put('/businesses/:business_id', checkToken, (request, response) => {
   // update info for a particular business based on their unique business id
 })
 
-router.put('/users/:user_id', (request, response) => {
+router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
   // update info for a particular user based on their unique user id
 })
 
