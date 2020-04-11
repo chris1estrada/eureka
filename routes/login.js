@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 // for validating and sanitizing request data
 const { body, validationResult } = require('express-validator')
+const jwt = require('jsonwebtoken')
 
 const db = require('../db');
 const { validate } = require('../utils/auth')
@@ -29,7 +30,10 @@ router.post('/', [
             /**
              * @todo package this into a JWT for session management and security
              */
-            response.json({ uid: user_id })
+            jwt.sign({ uid: user_id }, process.env.JWT_SECRET, (err, token) => {
+              if (err) { return response.json({ error: err }) }
+              response.send(token)
+            })
           })
         } else {
           response.json({ error: "Invalid login" })
