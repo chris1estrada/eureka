@@ -1,5 +1,7 @@
-// Call to get the latitude and longitude.
-// Author: Chris Ancheta
+/** 
+ * Call to get the latitude and longitude.
+ * @author Chris Ancheta
+*/
 
 /*
   To use this function in another component,

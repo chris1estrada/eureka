@@ -21,6 +21,7 @@ const HomePage = () => {
 // Example mock data for proper formatting
 let businesses = [
   {
+    business_id:  1,
     name:         "Burger Barn",
     address:      "222 State St, Philadelphia, PA, 19146",
     phone:        "(609) 456-7890",
@@ -35,105 +36,15 @@ let businesses = [
   },
 
   {
+    business_id:  2,
     name:         "El Mariachi Mexican Restaurant",
     address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-
-  {
-    name:         "El Mariachi Mexican Restaurant",
-    address:      "512 Delsea Dr, Glassboro, NJ 08028",
-    phone:        "(856) 243-5902",
-    hours:        "10am - 11pm Sunday - Saturday",
-    hours2:       "10am - 9pm Sunday",
-    tags:         "Mexican",
-    description:  "This is the description of the business.",
-  },
-  
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }
 ];
 
   return (  
