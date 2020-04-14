@@ -15,10 +15,7 @@ export default class BusinessCard extends Component {
                         {this.props.business.address}
                         </Typography>
                         <Typography variant="body1" color="textSecondary" component="p"  style={{fontSize: ".75rem"}}>
-                        {this.props.business.tags}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary" component="p"  style={{fontSize: ".75rem"}}>
-                        {this.props.business.phone}
+                        {this.props.business.cuisine}
                         </Typography>
                     </CardContent>
                 </Card>

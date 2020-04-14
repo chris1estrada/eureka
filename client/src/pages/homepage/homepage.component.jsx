@@ -44,7 +44,62 @@ let businesses = [
     long:         null,
     image:        null,
     distance:     null,
-  }
+  }, 
+  
+  {
+    business_id:  2,
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }, 
+  
+  {
+    business_id:  2,
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }, 
+  
+  {
+    business_id:  2,
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }, 
+  
+  {
+    business_id:  2,
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }, 
+  
+  {
+    business_id:  2,
+    name:         "El Mariachi Mexican Restaurant",
+    address:      "512 Delsea Dr, Glassboro, NJ 08028",
+    cuisine:      "Mexican",
+    lat:          null,
+    long:         null,
+    image:        null,
+    distance:     null,
+  }, 
 ];
 
   return (  
