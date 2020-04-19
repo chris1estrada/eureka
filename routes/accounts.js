@@ -95,56 +95,57 @@ router.post(
     /**
      * @todo Add a field to the database to store this value then modify query.
      */
-    // body('tel')
-    //   .not()
-    //   .isEmpty()
-    //   .trim()
-    //   .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
-    //   .withMessage('Telephone number not a valid format'),
+    body('tel')
+      .not()
+      .isEmpty()
+      .trim()
+      .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
+      .withMessage('Telephone number not a valid format'),
     body(['address', 'cuisine'], 'Field required')
       .not()
       .isEmpty(),
     body(['lat', 'lng'], 'Field required').notEmpty().toFloat(),
   ],
   (request, response) => {
-    // console.log(request.body);
-    // console.log(request.files);
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
       return response.status(422).json({ errors: errors.array() })
     }
     try {
+      const { uid, name, address, lat, lng, cuisine, description, isAdult, owner_id, tel } = request.body
       // Use the user_id to retrieve the username and password
       const sql1 = 'CALL selectUser(?)'
       db.query(sql1, [request.body.uid], (err, [[user]], fields) => {
-        if (err) return response.json({ error: err })
+        if (err) return response.json({ error: err.message })
+        const { email, password } = user
+        const menu = request.files.menu[0].location
+        const photos = request.files.photo
         // Create the business and capture the newly created BID
-        const sql2 = 'CALL insertBusiness(?,?,?,?,?,?,?,?,?,?,?)'
+        const sql2 = 'CALL insertBusiness(?,?,?,?,?,?,?,?,?,?,?,?)'
         db.query(
           sql2,
           [
-            user.user_id,
-            user.email,
-            user.password,
-            request.body.name,
-            request.body.address,
-            request.body.lat,
-            request.body.lng,
-            request.files.menu[0].location,
-            request.body.cuisine,
-            request.body.description,
-            request.body.isAdult,
-            request.body.owner_id
+            uid,
+            email,
+            password,
+            name,
+            address,
+            lat,
+            lng,
+            menu,
+            cuisine,
+            description,
+            isAdult,
+            tel
           ],
           async (err, [[results]]) => {
-            if (err) return response.json({ error: err })
-            // If user uploaded any photos. Add the url to the database
-            if (request.files.photo) {
+            if (err) { response.json({ error: err }) }
+            // If user uploaded any photos. Add the urls to the database
+            if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
-              request.files.photo.forEach((photo) => {
+              photos.forEach((photo) => {
                 db.query(sql3, [results.BID, photo.originalname, photo.location], (err, results) => {
-                  // if (err) return response.json({ error: err })
-                  console.log({ photos: results });
+                  if (err) return response.json({ error: err })
                 })
               })
             }
@@ -176,6 +177,7 @@ router.post(
                 if (err) return response.json({ error: err })
               })
             })
+            response.status().json('Business Created')
           })
       })
     } catch (err) {
@@ -188,13 +190,13 @@ router.get('/businesses/:business_id', checkToken, (request, response) => {
   // send back info for a particular business based on their unique business id
   let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
   var jsonArray = [];
-  for (let step = 0; step <= sqlArray.length-1; step++) {
+  for (let step = 0; step <= sqlArray.length - 1; step++) {
     db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
-      if(error) {
+      if (error) {
         return console.error(error.message);
       }
       //makes sure we only get a response once we've executed the last SQL proc 
-      if(step == (sqlArray.length-1)) {
+      if (step == (sqlArray.length - 1)) {
         jsonArray.push(results);
         response.json(jsonArray);
         console.log(jsonArray);
@@ -202,7 +204,7 @@ router.get('/businesses/:business_id', checkToken, (request, response) => {
       else {
         jsonArray.push(results);
       }
-    });  
+    });
   };
 })
 
@@ -210,7 +212,7 @@ router.get('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular user based on their unique user id
   let userInfo = 'call selectUser(?)';
   db.query(userInfo, request.params.user_id, (error, [[results]]) => {
-    if(error) {
+    if (error) {
       return console.error(error.message);
     };
     //makes sure we only get a response once we've executed the last SQL proc 
