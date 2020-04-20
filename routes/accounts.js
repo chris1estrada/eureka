@@ -20,6 +20,7 @@ const db = require('../db');
 const { createHash } = require('../utils/auth')
 const { checkToken } = require('../middlewares/auth')
 
+const { getBusinessDetails } = require('./controllers/business.controllers')
 
 /**
  * Create a new Consumer user
@@ -186,26 +187,11 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', checkToken, (request, response) => {
+router.get('/businesses/:business_id', checkToken, async (request, response) => {
   // send back info for a particular business based on their unique business id
-  let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
-  var jsonArray = [];
-  for (let step = 0; step <= sqlArray.length - 1; step++) {
-    db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
-      if (error) {
-        return console.error(error.message);
-      }
-      //makes sure we only get a response once we've executed the last SQL proc 
-      if (step == (sqlArray.length - 1)) {
-        jsonArray.push(results);
-        response.json(jsonArray);
-        console.log(jsonArray);
-      }
-      else {
-        jsonArray.push(results);
-      }
-    });
-  };
+  const { business_id } = request.params
+  const result = await getBusinessDetails(business_id)
+  response.json(result)
 })
 
 router.get('/users/:user_id', checkToken, (request, response) => {
