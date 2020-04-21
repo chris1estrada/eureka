@@ -2,7 +2,7 @@
 Senior Project - Eureka!
 
 ## API reference
-* https://documenter.getpostman.com/view/8868237/SzYbxc2z?version=latest
+* https://documenter.getpostman.com/view/8868237/SzYaVJ6Z?version=latest
 
 ## Frontend
 * Chris Estrada
