@@ -1,5 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import MomentUtils from '@date-io/moment'
 import './App.css';
 
 import HomePage from './pages/homepage/homepage.component';
@@ -14,21 +16,24 @@ import Header from './components/header/header.component';
 
 const App = () => {
   return (
-    <div>
-      <Header />
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/about" component={AboutPage} />
-        <Route path="/account/:display_name" component={AccountPage} />
-        <Route path="/details/:bid" component={DetailsPage} />
-        <Route exact path="/login" component={LoginPage} />
-        <Route exact path="/accounts/users" component={UserRegistrationPage} />
-        <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
-        <Route component={() => (
-          <h1> Oops! Page not found!</h1>
-        )} />
-      </Switch>
-    </div>
+
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+      <div style={{ overflowX: 'hidden' }}>
+        <Header />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/about" component={AboutPage} />
+          <Route path="/account/:display_name" component={AccountPage} />
+          <Route path="/details/:bid" component={DetailsPage} />
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/accounts/users" component={UserRegistrationPage} />
+          <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
+          <Route component={() => (
+            <h1> Oops! Page not found!</h1>
+          )} />
+        </Switch>
+      </div>
+    </MuiPickersUtilsProvider>
   );
 }
 
