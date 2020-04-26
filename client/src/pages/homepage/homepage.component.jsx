@@ -3,6 +3,7 @@ import getLocation from '../../locationServices.js'
 import {DisplayMapFC} from './map/DisplayMapClass';
 import BusinessCard from './businessCard.component';
 import './homepage.css';
+import PersonList from './test';
 
 const HomePage = () => { 
 
@@ -104,12 +105,13 @@ let businesses = [
 
   return (  
     <div className="HomepageComponent">
+      <PersonList />
       <div className="DesktopBusinessList">
-      { businesses.map((business) => <BusinessCard business={business} /> )}
+        { businesses.map((business) => <BusinessCard business={business} /> )}
       </div>
-      { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
+        { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
       <div className="MobileBusinessList">
-      { businesses.map((business) => <BusinessCard business={business} /> )}
+        { businesses.map((business) => <BusinessCard business={business} /> )}
       </div>
     </div>
   );
