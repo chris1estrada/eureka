@@ -1,5 +1,6 @@
 import React, { createContext } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline'
 import './App.css';
 
 import HomePage from './pages/homepage/homepage.component';
@@ -17,6 +18,7 @@ const App = () => {
   const { isAuthenticated } = useAuth()
   return (
     <div>
+      <CssBaseline />
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
