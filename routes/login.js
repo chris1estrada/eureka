@@ -27,15 +27,22 @@ router.post('/', [
       // Validate the given password agains the hash from the DB
       const isValid = await validate(password, results.hash)
       if (isValid) {
+        const user = {}
         // retrieve the user_id
         const sql2 = 'SELECT user_id from users where email = ?'
         db.query(sql2, [results.email], (err, [{ user_id }]) => {
           if (err) return response.json({ error: err })
-          // create token and send response
-          jwt.sign({ uid: user_id }, process.env.JWT_SECRET, (err, token) => {
-            if (err) { return response.json({ error: err }) }
-            response.send({ token: token })
+          const sql3 = 'SELECT business_id as bid, name from businesses where owner_id = ?'
+          db.query(sql3, [user_id], (err, results) => {
+            const businesses = results
+            console.log(results);
+            // create token and send response
+            jwt.sign({ uid: user_id, businesses: businesses }, process.env.JWT_SECRET, (err, token) => {
+              if (err) { return response.json({ error: err }) }
+              response.send({ token: token })
+            })
           })
+
         })
       } else {
         response.json({ error: "Invalid username and password combination" })
