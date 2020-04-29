@@ -26,7 +26,7 @@ const App = () => {
         <Route
           exact
           path="/login"
-          render={() => isAuthenticated ? <Redirect to='/' /> : <LoginPage />}
+          render={() => isAuthenticated() ? <Redirect to='/' /> : <LoginPage />}
         />
         <Route exact path="/accounts/users" component={UserRegistrationPage} />
         <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
