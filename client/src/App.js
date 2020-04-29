@@ -23,7 +23,6 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/about" component={AboutPage} />
-        <Route path="/account/:display_name" component={AccountPage} />
         <Route path="/details/:bid" component={DetailsPage} />
         <Route
           exact
@@ -32,6 +31,7 @@ const App = () => {
         />
         <Route exact path="/accounts/users" component={UserRegistrationPage} />
         <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
+        <Route path="/accounts/businesses/:bid" component={AccountPage} />
         <Route component={() => (
           <h1> Oops! Page not found!</h1>
         )} />
