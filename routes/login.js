@@ -14,7 +14,7 @@ router.post('/', [
 ], (request, response) => {
   const errors = validationResult(request)
   if (!errors.isEmpty()) {
-    return response.status(422).json({ errors: errors.array() })
+    return response.json({ error: "Invalid usrename and password combination" })
   }
   const { username, password } = request.body
 
