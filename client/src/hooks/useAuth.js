@@ -25,6 +25,7 @@ export const useAuth = () => {
   const login = (username, password) => {
     axios.post('/login', { username, password })
       .then(res => {
+        console.log(res.data);
         const { error, token } = res.data
         if (token) {
           dispatch({
@@ -33,11 +34,17 @@ export const useAuth = () => {
           })
           history.replace('/')
         } else {
-          return { error: error }
+          console.log(error);
+          dispatch({
+            type: "error",
+            payload: { error: error }
+          })
+          return false
         }
       })
       .catch(err => {
-        return { error: err.message }
+        console.error(err.stack)
+        return false
       })
   }
 
