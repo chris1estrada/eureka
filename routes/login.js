@@ -27,12 +27,10 @@ router.post('/', [
           const sql3 = 'SELECT user_id from users where email = ?'
           db.query(sql3, [email], (err, [{ user_id }]) => {
             if (err) return response.json({ error: err })
-            /**
-             * @todo package this into a JWT for session management and security
-             */
+            // create token and send response
             jwt.sign({ uid: user_id }, process.env.JWT_SECRET, (err, token) => {
               if (err) { return response.json({ error: err }) }
-              response.send(token)
+              response.send({ token: token })
             })
           })
         } else {
