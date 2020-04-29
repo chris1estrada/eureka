@@ -93,11 +93,12 @@ router.post(
   [
     body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
     body('name', 'Field required').not().isEmpty(),
+    // phone number must be in the form xxx-xxx-xxxx and not begin with 0 or 1
     body('tel')
       .not()
       .isEmpty()
       .trim()
-      .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
+      .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/)
       .withMessage('Telephone number not a valid format'),
     body(['address', 'cuisine'], 'Field required')
       .not()
