@@ -21,7 +21,7 @@ export const getInitialState = () => {
 
   // Check if a token exists in localStorage and attempt to load the data
   if (typeof localStorage !== "undefined") {
-    const token = localStorage.getItem("jwt");
+    const token = localStorage.getItem("eurekajwt");
     const decoded = token ? jwt.decode(token) : "{}"
     stored_state = {
       user: decoded,

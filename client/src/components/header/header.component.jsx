@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 const Header = () => {
   const history = useHistory()
-  const { user, logout } = useAuth()
+  const { user, logout, isAuthenticated } = useAuth()
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -94,7 +94,7 @@ const Header = () => {
               onClose={handleClose}
               variant='menu'
             >
-              {user.isAuthenticated ?
+              {isAuthenticated ?
                 // User is currently logged in
                 <div>
                   {user.businesses &&
@@ -105,7 +105,7 @@ const Header = () => {
                         <MenuItem
                           key={el.bid}
                           component={RouterLink}
-                          to={`/account/businesses/${el.bid}`}
+                          to={`/accounts/businesses/${el.bid}`}
                           onClick={handleClose}
                         >
                           {el.name}
