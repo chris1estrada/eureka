@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './login.css';
-import axios from 'axios';
-import jwt from 'jsonwebtoken';
+
 import { useAuth } from '../../hooks/useAuth'
+import { AuthContext } from '../../authProvider'
 
 const LoginInput = () => {
+  const [state, dispatch] = useContext(
+    AuthContext
+  )
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('')
@@ -18,21 +21,8 @@ const LoginInput = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(username, password);
     login(username, password)
-    // axios.post('/login', {
-    //   username,
-    //   password
-    // })
-    //   .then(res => {
-    //     const token = res.data;
-    //     sessionStorage.setItem({ jwt: token })
-    //     const decoded = jwt.decode(token);
-    //     console.log(decoded);
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   })
+    console.log(state);
   }
   return (
     <div className="center">
@@ -40,12 +30,11 @@ const LoginInput = () => {
       <form onSubmit={handleSubmit}>
 
         <div className="container">
-
           <label htmlFor="uname"><b>Username</b></label>
           <input type="username" placeholder="Enter Username" username="uname" value={username} onChange={handleUsernameChange} required />
-
           <label htmlFor="psw"><b>Password</b></label>
           <input type="password" placeholder="Enter Password" password="pwd" value={password} onChange={handlePasswordChange} required />
+          <p style={{ color: 'red' }}>{state.error || false}</p>
 
           <button type="submit">Login</button>
 
