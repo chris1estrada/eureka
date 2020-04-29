@@ -9,34 +9,38 @@ const { validate } = require('../utils/auth')
 
 router.post('/', [
   body('username', 'Enter a username').notEmpty(),
-  body('username', 'Invalid login').isEmail().normalizeEmail(),
+  body('username', 'Invalid email format').isEmail().normalizeEmail(),
   body('password', 'Enter a password').notEmpty()
 ], (request, response) => {
+  const errors = validationResult(request)
+  if (!errors.isEmpty()) {
+    return response.status(422).json({ errors: errors.array() })
+  }
+  const { username, password } = request.body
   // check that user exists
-  const sql1 = 'SELECT email from users where email=?'
-  db.query(sql1, [request.body.username], (err, [{ email }]) => {
+  const sql1 = 'SELECT email, password as hash from users where email=?'
+  db.query(sql1, [username], async (err, [results]) => {
     if (err) return response.json({ error: err })
-    if (email) {
-      // retrieve password hash
-      const sql2 = 'SELECT password as hash from users where email=?'
-      db.query(sql2, [email], (err, [{ hash }]) => {
-        if (err) return response.json({ error: err })
-        // validate supplied password with hash
-        if (validate(request.body.password, hash)) {
-          // retrieve the user_id
-          const sql3 = 'SELECT user_id from users where email = ?'
-          db.query(sql3, [email], (err, [{ user_id }]) => {
-            if (err) return response.json({ error: err })
-            // create token and send response
-            jwt.sign({ uid: user_id }, process.env.JWT_SECRET, (err, token) => {
-              if (err) { return response.json({ error: err }) }
-              response.send({ token: token })
-            })
+    if (!results) return response.json({ error: "Invalid username and password combination" })
+    try {
+      const isValid = await validate(password, results.hash)
+      console.log(isValid);
+      if (isValid) {
+        // retrieve the user_id
+        const sql2 = 'SELECT user_id from users where email = ?'
+        db.query(sql2, [results.email], (err, [{ user_id }]) => {
+          if (err) return response.json({ error: err })
+          // create token and send response
+          jwt.sign({ uid: user_id }, process.env.JWT_SECRET, (err, token) => {
+            if (err) { return response.json({ error: err }) }
+            response.send({ token: token })
           })
-        } else {
-          response.json({ error: "Invalid login" })
-        }
-      })
+        })
+      } else {
+        response.json({ error: "Invalid username and password combination" })
+      }
+    } catch (err) {
+      console.log(err);
     }
   })
 })
