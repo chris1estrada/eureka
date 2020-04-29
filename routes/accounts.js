@@ -93,9 +93,6 @@ router.post(
   [
     body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
     body('name', 'Field required').not().isEmpty(),
-    /**
-     * @todo Add a field to the database to store this value then modify query.
-     */
     body('tel')
       .not()
       .isEmpty()
@@ -139,13 +136,14 @@ router.post(
             isAdult,
             tel
           ],
-          async (err, [[results]]) => {
-            if (err) { response.json({ error: err }) }
+          async (err, results, fields) => {
+            if (err) { return response.json({ error: err }) }
+            const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
-                db.query(sql3, [results.BID, photo.originalname, photo.location], (err, results) => {
+                db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
                   if (err) return response.json({ error: err })
                 })
               })
@@ -155,9 +153,8 @@ router.post(
               const deals = await JSON.parse(request.body.deals)
               const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
               deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
-                console.log(description, type, day, start_time, end_time, start_datetime, end_datetime)
                 db.query(sql4, [
-                  results.BID,
+                  BID,
                   description,
                   type, day,
                   start_time,
@@ -174,11 +171,11 @@ router.post(
             const hours = await JSON.parse(request.body.hours)
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, open_time, close_time }) => {
-              db.query(sql5, [results.BID, day, open_time, close_time], (err, results) => {
+              db.query(sql5, [BID, day, open_time, close_time], (err, results) => {
                 if (err) return response.json({ error: err })
               })
             })
-            response.status().json('Business Created')
+            response.status(200).json('Business Created')
           })
       })
     } catch (err) {
