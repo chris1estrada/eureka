@@ -1,5 +1,5 @@
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React, { createContext } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 
 import HomePage from './pages/homepage/homepage.component';
@@ -9,10 +9,12 @@ import LoginPage from './pages/login/login.component';
 import UserRegistrationPage from './pages/register/user-registration-page';
 import BusinessRegistrationPage from './pages/register/business-registration-page';
 import AccountPage from './pages/account/account.component';
-
 import Header from './components/header/header.component';
 
+import { useAuth } from './hooks/useAuth'
+
 const App = () => {
+  const { isAuthenticated } = useAuth()
   return (
     <div>
       <Header />
@@ -21,7 +23,11 @@ const App = () => {
         <Route exact path="/about" component={AboutPage} />
         <Route path="/account/:display_name" component={AccountPage} />
         <Route path="/details/:bid" component={DetailsPage} />
-        <Route exact path="/login" component={LoginPage} />
+        <Route
+          exact
+          path="/login"
+          render={() => isAuthenticated ? <Redirect to='/' /> : <LoginPage />}
+        />
         <Route exact path="/accounts/users" component={UserRegistrationPage} />
         <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
         <Route component={() => (
