@@ -1,31 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-
+import HomeIcon from '@material-ui/icons/Home'
 //import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
 import { useAuth } from '../../hooks/useAuth'
-
-// FOR TESTING PURPOSES
-// All the businesses within the specified radius will be stored into an array
-// along with whether or not the business has an active deal or promo occurring
-const all_businesses = [
-  { 'name': 'Business 1', 'active': true },
-  { 'name': 'Business 2', 'active': false },
-  { 'name': 'Business 3', 'active': false },
-  { 'name': 'Business 4', 'active': true },
-  { 'name': 'Business 5', 'active': false },
-  { 'name': 'Business 6', 'active': true },
-  { 'name': 'Business 7', 'active': true },
-  { 'name': 'Business 8', 'active': true }
-];
+import { Divider, ListSubheader } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,22 +20,29 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   menuButton: {
     marginRight: theme.spacing(2),
+  },
+  logout: {
+    marginTop: '20px'
   }
 }));
 
 const Header = () => {
+  const history = useHistory()
   const { user, logout } = useAuth()
-  console.log(user);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
   const handleAccountMenu = event => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleHome = event => {
+    history.push('/')
   };
 
   const handleClose = () => {
@@ -64,6 +58,16 @@ const Header = () => {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
+          <div>
+            <IconButton
+              edge="start"
+              aria-label="home button"
+              onClick={handleHome}
+            >
+              <HomeIcon style={{ color: 'white' }} />
+            </IconButton>
+          </div>
+
           <div>
             <IconButton
               className={classes.menuButton}
@@ -90,21 +94,32 @@ const Header = () => {
               onClose={handleClose}
               variant='menu'
             >
-              {user.userId ?
+              {user.isAuthenticated ?
+                // User is currently logged in
                 <div>
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  {user.bid ?
-                    <MenuItem
-                      component={RouterLink}
-                      to='/account/xyz123'
-                      onClick={handleClose}
-                    >
-                      My business
-                  </MenuItem>
-                    : false}
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  {user.businesses &&
+                    <Fragment>
+                      <ListSubheader>My Businesses</ListSubheader>
+                      <Divider />
+                      {user.businesses.map(el => (
+                        <MenuItem
+                          key={el.bid}
+                          component={RouterLink}
+                          to={`/account/businesses/${el.bid}`}
+                          onClick={handleClose}
+                        >
+                          {el.name}
+                        </MenuItem>
+                      ))
+                      }
+                    </Fragment>
+
+                  }
+                  <MenuItem className={classes.logout} onClick={handleLogout}>Logout</MenuItem>
+
                 </div>
                 :
+                // User is currently logged out
                 <div>
                   <MenuItem component={RouterLink} to='/login' onClick={handleClose}>Login</MenuItem>
                   <MenuItem component={RouterLink} to='/register' onClick={handleClose}>Register</MenuItem>
