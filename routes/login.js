@@ -17,14 +17,15 @@ router.post('/', [
     return response.status(422).json({ errors: errors.array() })
   }
   const { username, password } = request.body
-  // check that user exists
+
+  // Retrieve the hashed password for the given email if it exists
   const sql1 = 'SELECT email, password as hash from users where email=?'
   db.query(sql1, [username], async (err, [results]) => {
     if (err) return response.json({ error: err })
     if (!results) return response.json({ error: "Invalid username and password combination" })
     try {
+      // Validate the given password agains the hash from the DB
       const isValid = await validate(password, results.hash)
-      console.log(isValid);
       if (isValid) {
         // retrieve the user_id
         const sql2 = 'SELECT user_id from users where email = ?'
