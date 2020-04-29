@@ -14,13 +14,18 @@ function authReducer(state, action) {
     case 'login':
       const { token } = action.payload
       const decoded = jwt.decode(token);
+      console.log(decoded.businesses);
       localStorage.setItem("jwt", token)
-      return { user: { userId: decoded.uid, isAuthenticated: true }, error: '' }
+      return { user: { userId: decoded.uid, businesses: decoded.businesses, isAuthenticated: true }, error: '' }
       break
     // Clear token from localStorage and set default state
     case 'logout':
+      console.log("logging out");
       localStorage.removeItem("jwt")
-      return getInitialState()
+      return {
+        user: {},
+        isAuthenticated: false
+      }
       break
     case 'error':
       const { error } = action.payload
