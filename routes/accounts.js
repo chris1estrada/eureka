@@ -184,7 +184,7 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', checkToken, async (request, response) => {
+router.get('/businesses/:business_id',  async (request, response) => {
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
@@ -215,7 +215,7 @@ router.put('/businesses/:business_id', [
   body('description'),
   body('isAdult'), //must be an int of 0 or 1
   body('phoneNumber') //must be 10 or 11 digits
-], checkToken, async (request, response) => {
+],  async (request, response) => {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return response.status(422).json({ errors: errors.array() })
@@ -229,7 +229,6 @@ router.put('/businesses/:business_id', [
       request.body.name,
       request.body.address,
       request.body.lat,
-      request.body.long,
       request.body.long,
       request.body.menu,
       request.body.cuisine,
