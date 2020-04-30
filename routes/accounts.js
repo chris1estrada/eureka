@@ -41,7 +41,7 @@ router.post('/users', [
   body('last_name')
     .not().isEmpty()
     .trim()
-], async (request, response) => {
+], checkToken, async (request, response) => {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return response.status(422).json({ errors: errors.array() })
@@ -65,7 +65,7 @@ router.post('/users', [
 
 // Create a new business
 router.post(
-  '/businesses',
+  '/businesses', checkToken,
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -184,14 +184,14 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', async (request, response) => {
+router.get('/businesses/:business_id', checkToken, async (request, response) => {
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
   response.json(result)
 })
 
-router.get('/users/:user_id', (request, response) => {
+router.get('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular user based on their unique user id
   let userInfo = 'call selectUser(?)';
   db.query(userInfo, request.params.user_id, (error, [[results]]) => {
@@ -215,7 +215,7 @@ router.put('/businesses/:business_id', [
   body('description'),
   body('isAdult'), //must be an int of 0 or 1
   body('phoneNumber') //must be 10 or 11 digits
-], async (request, response) => {
+], checkToken, async (request, response) => {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return response.status(422).json({ errors: errors.array() })
@@ -247,11 +247,11 @@ router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
   // update info for a particular user based on their unique user id
 })
 
-router.patch('/users/:user_id', (request, response) => {
+router.patch('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular business based on their unique business id
 })
 
-router.patch('/users/:user_id/recover', (request, response) => {
+router.patch('/users/:user_id/recover', checkToken, (request, response) => {
   // set a temporary password for a particular user based on their unique user id
   // and send an email to use it to change
   // TBD IF WE NEED
