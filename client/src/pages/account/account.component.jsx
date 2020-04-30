@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 import { useAuth } from '../../hooks/useAuth'
+import BusinessForm from '../../components/business-form';
+import { Container } from '@material-ui/core';
 
 const AccountPage = () => {
   const { user } = useAuth()
@@ -18,11 +20,10 @@ const AccountPage = () => {
   }, [bid])
 
   return (
-    <div>
-      <h1>ACCOUNT PAGE {bid}</h1>
-      <p>{connected}</p>
-    </div>
-  );
+    <Container maxWidth='md'>
+      <BusinessForm />
+    </Container>
+  )
 };
 
 export default AccountPage;
