@@ -8,36 +8,9 @@ import {
   Box,
 } from '@material-ui/core';
 
-import DayEventList from './day-event-list'
+import { DateTimePicker } from '@material-ui/pickers'
 
-// Left this for you to work with. I'd just make it an array of strings
-// and use a <Select> that maps over the array to create some <MenuItem>s
-const tags = [
-  {
-    id: 0,
-    title: 'Chinese',
-    selected: false,
-    key: 'food'
-  },
-  {
-    id: 1,
-    title: 'Bar',
-    selected: false,
-    key: 'drink'
-  },
-  {
-    id: 2,
-    title: 'American',
-    selected: false,
-    key: 'food'
-  },
-  {
-    id: 3,
-    title: 'Deli',
-    selected: false,
-    key: 'food'
-  }
-]
+import DayEventList from './day-event-list'
 
 /**
  * TextField wrapper that applies some default styles
@@ -59,6 +32,7 @@ const OutlinedTextField = (props) => (
  * @todo Add input for menu: single pdf. Add input multiple images, 5 max.
  */
 const BusinessForm = (props) => {
+
 
   // Values for form data and form default state
   const [name, setName] = useState()
@@ -95,11 +69,11 @@ const BusinessForm = (props) => {
         </FormGroup>
         <Divider style={{ margin: '8px' }} />
         <FormLabel component='legend'>Hours</FormLabel>
-        <DayEventList items={hours} onAdd={data => setHours(data)} onRemove={data => setHours(data)} />
+        <DayEventList items={hours} dateTime="false" description="false" onAdd={data => setHours(data)} onRemove={data => setHours(data)} />
         <FormLabel component='legend'>Specials</FormLabel>
-        <DayEventList items={recurringDeals} onAdd={data => setRecurringDeals(data)} onRemove={data => setRecurringDeals(data)} />
+        <DayEventList items={recurringDeals} dateTime="false" description="true" onAdd={data => setRecurringDeals(data)} onRemove={data => setRecurringDeals(data)} />
         <FormLabel component='legend'>Events</FormLabel>
-        <DayEventList dateTime={true} items={limitedDeals} onAdd={data => setLimitedDeals(data)} onRemove={data => setLimitedDeals(data)} />
+        <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => setLimitedDeals(data)} onRemove={data => setLimitedDeals(data)} />
         <Button type='submit'>Submit</Button>
       </form>
     </Box >
