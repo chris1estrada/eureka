@@ -3,7 +3,7 @@
  * API DOCUMENTATION AVAILABLE AT https://documenter.getpostman.com/view/8868237/SzYaVJ6Z
  * 
  * @module Route callbacks for all user account info
- * @author Chris Ancheta
+ * @author Chris Ancheta, Jaxon Terrell
  */
 
 const express = require('express')
@@ -187,14 +187,14 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', checkToken, async (request, response) => {
+router.get('/businesses/:business_id', async (request, response) => {
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
   response.json(result)
 })
 
-router.get('/users/:user_id', checkToken, (request, response) => {
+router.get('/users/:user_id', (request, response) => {
   // send back info for a particular user based on their unique user id
   let userInfo = 'call selectUser(?)';
   db.query(userInfo, request.params.user_id, (error, [[results]]) => {
@@ -207,8 +207,43 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 });
 
 
-router.put('/businesses/:business_id', checkToken, (request, response) => {
+router.put('/businesses/:business_id', [ 
+  //may need to add a param for business_id, depending on if we ask for user to input
+  body('name'), 
+  body('address'), 
+  body('lat'),
+  body('long'),
+  body('menu'),
+  body('cuisine'),
+  body('description'),
+  body('isAdult'), //must be an int of 0 or 1
+  body('phoneNumber') //must be 10 or 11 digits
+], async (request, response) => {
+  const errors = validationResult(request);
+  if (!errors.isEmpty()) {
+    return response.status(422).json({ errors: errors.array() })
+  }
   // update info for a particular business based on their unique business id
+  const sql = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)'
+  db.query(
+    sql,
+    [
+      request.params.business_id,
+      request.body.name,
+      request.body.address,
+      request.body.lat,
+      request.body.long,
+      request.body.long,
+      request.body.menu,
+      request.body.cuisine,
+      request.body.description,
+      request.body.isAdult,
+      request.body.phoneNumber
+    ],
+    (err, results) => {
+      if(err) response.status(422).json({ error: err.essage })
+      return response.status(200).json(results)
+    }) 
 })
 
 router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
