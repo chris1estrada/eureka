@@ -6,12 +6,9 @@ import BusinessForm from '../../components/business-form';
 const BusinessRegistrationPage = () => {
 
   return (
-    <>
-      <CssBaseline />
-      <Container maxWidth='md'>
-        <BusinessForm />
-      </Container>
-    </>
+    <Container maxWidth='md'>
+      <BusinessForm />
+    </Container>
   )
 }
 
