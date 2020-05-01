@@ -3,7 +3,7 @@
  * API DOCUMENTATION AVAILABLE AT https://documenter.getpostman.com/view/8868237/SzYaVJ6Z
  * 
  * @module Route callbacks for all user account info
- * @author Chris Ancheta
+ * @author Chris Ancheta, Jaxon Terrell
  */
 
 const express = require('express')
@@ -41,7 +41,7 @@ router.post('/users', [
   body('last_name')
     .not().isEmpty()
     .trim()
-], async (request, response) => {
+], checkToken, async (request, response) => {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return response.status(422).json({ errors: errors.array() })
@@ -65,7 +65,7 @@ router.post('/users', [
 
 // Create a new business
 router.post(
-  '/businesses',
+  '/businesses', checkToken,
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -93,9 +93,6 @@ router.post(
   [
     body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
     body('name', 'Field required').not().isEmpty(),
-    /**
-     * @todo Add a field to the database to store this value then modify query.
-     */
     body('tel')
       .not()
       .isEmpty()
@@ -139,13 +136,14 @@ router.post(
             isAdult,
             tel
           ],
-          async (err, [[results]]) => {
-            if (err) { response.json({ error: err }) }
+          async (err, results, fields) => {
+            if (err) { return response.json({ error: err }) }
+            const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
-                db.query(sql3, [results.BID, photo.originalname, photo.location], (err, results) => {
+                db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
                   if (err) return response.json({ error: err })
                 })
               })
@@ -155,9 +153,8 @@ router.post(
               const deals = await JSON.parse(request.body.deals)
               const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
               deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
-                console.log(description, type, day, start_time, end_time, start_datetime, end_datetime)
                 db.query(sql4, [
-                  results.BID,
+                  BID,
                   description,
                   type, day,
                   start_time,
@@ -174,11 +171,11 @@ router.post(
             const hours = await JSON.parse(request.body.hours)
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, open_time, close_time }) => {
-              db.query(sql5, [results.BID, day, open_time, close_time], (err, results) => {
+              db.query(sql5, [BID, day, open_time, close_time], (err, results) => {
                 if (err) return response.json({ error: err })
               })
             })
-            response.status().json('Business Created')
+            response.status(200).json('Business Created')
           })
       })
     } catch (err) {
@@ -187,7 +184,7 @@ router.post(
   }
 )
 
-router.get('/businesses/:business_id', checkToken, async (request, response) => {
+router.get('/businesses/:business_id',  async (request, response) => {
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
@@ -207,19 +204,53 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 });
 
 
-router.put('/businesses/:business_id', checkToken, (request, response) => {
+router.put('/businesses/:business_id', [ 
+  //may need to add a param for business_id, depending on if we ask for user to input
+  body('name'), 
+  body('address'), 
+  body('lat'),
+  body('long'),
+  body('menu'),
+  body('cuisine'),
+  body('description'),
+  body('isAdult'), //must be an int of 0 or 1
+  body('phoneNumber') //must be 10 or 11 digits
+],  async (request, response) => {
+  const errors = validationResult(request);
+  if (!errors.isEmpty()) {
+    return response.status(422).json({ errors: errors.array() })
+  }
   // update info for a particular business based on their unique business id
+  const sql = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)'
+  db.query(
+    sql,
+    [
+      request.params.business_id,
+      request.body.name,
+      request.body.address,
+      request.body.lat,
+      request.body.long,
+      request.body.menu,
+      request.body.cuisine,
+      request.body.description,
+      request.body.isAdult,
+      request.body.phoneNumber
+    ],
+    (err, results) => {
+      if(err) response.status(422).json({ error: err.essage })
+      return response.status(200).json(results)
+    }) 
 })
 
 router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
   // update info for a particular user based on their unique user id
 })
 
-router.patch('/users/:user_id', (request, response) => {
+router.patch('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular business based on their unique business id
 })
 
-router.patch('/users/:user_id/recover', (request, response) => {
+router.patch('/users/:user_id/recover', checkToken, (request, response) => {
   // set a temporary password for a particular user based on their unique user id
   // and send an email to use it to change
   // TBD IF WE NEED
