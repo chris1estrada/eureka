@@ -94,10 +94,10 @@ const Header = () => {
               onClose={handleClose}
               variant='menu'
             >
-              {isAuthenticated ?
+              {isAuthenticated() ?
                 // User is currently logged in
                 <div>
-                  {user.businesses &&
+                  {user.businesses.length > 0 ?
                     <Fragment>
                       <ListSubheader>My Businesses</ListSubheader>
                       <Divider />
@@ -113,6 +113,8 @@ const Header = () => {
                       ))
                       }
                     </Fragment>
+                    :
+                    <MenuItem component={RouterLink} to={`/accounts/businesses`} onClick={handleClose}>Link a Business!</MenuItem>
 
                   }
                   <MenuItem className={classes.logout} onClick={handleLogout}>Logout</MenuItem>
@@ -122,7 +124,7 @@ const Header = () => {
                 // User is currently logged out
                 <div>
                   <MenuItem component={RouterLink} to='/login' onClick={handleClose}>Login</MenuItem>
-                  <MenuItem component={RouterLink} to='/register' onClick={handleClose}>Register</MenuItem>
+                  <MenuItem component={RouterLink} to='/accounts/users' onClick={handleClose}>Register</MenuItem>
                 </div>
               }
             </Menu>

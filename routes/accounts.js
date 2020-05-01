@@ -3,7 +3,7 @@
  * API DOCUMENTATION AVAILABLE AT https://documenter.getpostman.com/view/8868237/SzYaVJ6Z
  * 
  * @module Route callbacks for all user account info
- * @author Chris Ancheta
+ * @author Chris Ancheta, Jaxon Terrell
  */
 
 const express = require('express')
@@ -21,6 +21,7 @@ const { createHash } = require('../utils/auth')
 const { checkToken } = require('../middlewares/auth')
 
 const { getBusinessDetails } = require('./controllers/business.controllers')
+const getGeocode = require('./controllers/here')
 
 /**
  * Create a new Consumer user
@@ -42,8 +43,10 @@ router.post('/users', [
     .not().isEmpty()
     .trim()
 ], async (request, response) => {
+  console.log(request.body);
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
+    console.log(errors);
     return response.status(422).json({ errors: errors.array() })
   }
   const hashedPass = await createHash(request.body.password)
@@ -103,30 +106,39 @@ router.post(
     body(['address', 'cuisine'], 'Field required')
       .not()
       .isEmpty(),
-    body(['lat', 'lng'], 'Field required').notEmpty().toFloat(),
   ],
-  (request, response) => {
+  async (request, response) => {
     const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-      return response.status(422).json({ errors: errors.array() })
-    }
+    // if (!errors.isEmpty()) {
+    //   return response.status(422).json({ errors: errors.array() })
+    // }
     try {
-      const { uid, name, address, lat, lng, cuisine, description, isAdult, owner_id, tel } = request.body
+      console.log(request.body);
+      console.log(request.files);
+      console.log('==========================================================');
+      const { uid, name, address, cuisine, description, isAdult, owner_id, tel } = request.body
+      const { lat, lng } = await getGeocode(address)
       // Use the user_id to retrieve the username and password
       const sql1 = 'CALL selectUser(?)'
-      db.query(sql1, [request.body.uid], (err, [[user]], fields) => {
+      db.query(sql1, [request.body.uid], (err, results, fields) => {
+        const [[user]] = results
+        console.log(user);
         if (err) return response.json({ error: err.message })
         const { email, password } = user
         const menu = request.files.menu[0].location
         const photos = request.files.photo
+        console.log(photos);
+        console.log(menu);
+        console.log('==========================================================');
+
         // Create the business and capture the newly created BID
         const sql2 = 'CALL insertBusiness(?,?,?,?,?,?,?,?,?,?,?,?)'
         db.query(
           sql2,
           [
             uid,
-            email,
-            password,
+            null,
+            null,
             name,
             address,
             lat,
@@ -139,6 +151,9 @@ router.post(
           ],
           async (err, results, fields) => {
             if (err) { return response.json({ error: err }) }
+            console.log(results)
+            console.log('==========================================================');
+
             const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
@@ -150,8 +165,12 @@ router.post(
               })
             }
             // If the user provided any deals, insert them into the database
-            if (request.body.deals) {
-              const deals = await JSON.parse(request.body.deals)
+            let deals = request.body.deals
+            console.log(deals);
+            console.log('==========================================================');
+
+            if (deals) {
+              deals = await JSON.parse(request.body.deals)
               const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
               deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
                 db.query(sql4, [
@@ -164,28 +183,31 @@ router.post(
                   end_datetime
                 ],
                   (err, results) => {
-                    if (err) return response.json({ error: err })
+                    if (err) { console.error(err.stack) }
                   })
               })
             }
             // Insert business hours of operation into the database
             const hours = await JSON.parse(request.body.hours)
+            console.log(hours);
+            console.log('==========================================================');
+
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
-            hours.forEach(({ day, open_time, close_time }) => {
-              db.query(sql5, [BID, day, open_time, close_time], (err, results) => {
+            hours.forEach(({ day, starts, ends }) => {
+              db.query(sql5, [BID, day, starts, ends], (err, results) => {
                 if (err) return response.json({ error: err })
               })
             })
-            response.status(200).json('Business Created')
+            return response.status(200).json('Business Created')
           })
       })
     } catch (err) {
-      response.status(422).json({ error: err })
+      response.status(422).json({ error: err.stack })
     }
   }
 )
 
-router.get('/businesses/:business_id', checkToken, async (request, response) => {
+router.get('/businesses/:business_id', async (request, response) => {
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
@@ -205,19 +227,53 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 });
 
 
-router.put('/businesses/:business_id', checkToken, (request, response) => {
+router.put('/businesses/:business_id', [
+  //may need to add a param for business_id, depending on if we ask for user to input
+  body('name'),
+  body('address'),
+  body('lat'),
+  body('long'),
+  body('menu'),
+  body('cuisine'),
+  body('description'),
+  body('isAdult'), //must be an int of 0 or 1
+  body('phoneNumber') //must be 10 or 11 digits
+], async (request, response) => {
+  const errors = validationResult(request);
+  if (!errors.isEmpty()) {
+    return response.status(422).json({ errors: errors.array() })
+  }
   // update info for a particular business based on their unique business id
+  const sql = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)'
+  db.query(
+    sql,
+    [
+      request.params.business_id,
+      request.body.name,
+      request.body.address,
+      request.body.lat,
+      request.body.long,
+      request.body.menu,
+      request.body.cuisine,
+      request.body.description,
+      request.body.isAdult,
+      request.body.phoneNumber
+    ],
+    (err, results) => {
+      if (err) response.status(422).json({ error: err.essage })
+      return response.status(200).json(results)
+    })
 })
 
 router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
   // update info for a particular user based on their unique user id
 })
 
-router.patch('/users/:user_id', (request, response) => {
+router.patch('/users/:user_id', checkToken, (request, response) => {
   // send back info for a particular business based on their unique business id
 })
 
-router.patch('/users/:user_id/recover', (request, response) => {
+router.patch('/users/:user_id/recover', checkToken, (request, response) => {
   // set a temporary password for a particular user based on their unique user id
   // and send an email to use it to change
   // TBD IF WE NEED

@@ -21,7 +21,7 @@ const AccountPage = () => {
 
   return (
     <Container maxWidth='md'>
-      <BusinessForm />
+      <BusinessForm bid={bid} uid={user.uid} />
     </Container>
   )
 };

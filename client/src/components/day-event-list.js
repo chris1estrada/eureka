@@ -3,7 +3,7 @@ import moment from 'moment'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
-import { KeyboardDateTimePicker, KeyboardTimePicker } from '@material-ui/pickers'
+import { KeyboardDateTimePicker, TimePicker, KeyboardTimePicker } from '@material-ui/pickers'
 import {
   Divider,
   Select,
@@ -32,6 +32,7 @@ import {
  * @prop {boolean} [dateTime=false] - Used for providing a DateTime range
  */
 const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
+  const hasDescription = props.description === "true" ? true : false
   const isDateTime = dateTime === "true" ? true : false
   let STORAGE_FORMAT = ''
   if (isDateTime) {
@@ -46,7 +47,6 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
   const [end, setEnd] = useState(new moment())
   const [description, setDescription] = useState("")
   const [errors, setErrors] = useState({})
-  console.log(props.dateTime);
   const Picker = ({ label, value, onChange }) => (
     <div style={{ display: 'grid' }}>
       {
@@ -84,7 +84,6 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
     setDescription("")
   }
   const onAddItem = () => {
-    console.log(moment(start).format(STORAGE_FORMAT))
     const startTime = moment(start).day()
     const endTime = moment(end).day()
     if (startTime > endTime) {
@@ -100,10 +99,10 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
           description: description
         }
       ])
+      setDefaultState()
     }
   }
   const onRemoveItem = (removeIndex) => () => {
-    console.log(removeIndex);
     onRemove(props.items.filter((_, index) => {
       return index !== removeIndex
     }))
@@ -139,9 +138,9 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
               </Select>
             </FormControl>
         }
-        <Picker label='Start' value={start} onChange={time => console.log(time)} />
+        <Picker label='Start' value={start} onChange={time => setStart(time)} />
         <Picker label='End' value={end} onChange={time => setEnd(time)} />
-        {props.description &&
+        {hasDescription &&
           <Fragment>
             <InputLabel id='description'>Description</InputLabel>
             <TextareaAutosize rowsMin={3} rowsMax={3} label='Description' multiline="true" value={description} onChange={e => setDescription(e.target.value)} />
