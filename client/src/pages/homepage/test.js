@@ -7,7 +7,12 @@ export default class PersonList extends React.Component {
   }
  
   componentDidMount() {
-    axios.get(`http://localhost:3000/api/v1/businesses/1`)
+    axios.get(`http://localhost:3000/api/v1/businesses`,
+    {
+    "radius": 15,
+    "lat": 39.7059,
+    "lng": -75.1808,
+    })
     .then(res => {
       console.log(res);
     })
