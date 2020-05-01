@@ -69,11 +69,11 @@ const HomePage = () => {
   return (
     <div className="HomepageComponent">
       <div className="DesktopBusinessList">
-        {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
       </div>
-      {coords.lat && coords.lng && demoBusinesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={demoBusinesses} /> : null}
+      {coords.lat && coords.lng && businesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={businesses} /> : null}
       <div className="MobileBusinessList">
-        {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1}/>) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1}/>) : null}
       </div>
     </div>
   );
