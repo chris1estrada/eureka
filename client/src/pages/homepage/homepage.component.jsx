@@ -19,6 +19,9 @@ const HomePage = () => {
     })
   }, []);
 
+// Setting a dummy location:
+const demoCoords = { lat: 39.7059, long: -75.1808};
+
 // Example mock data for proper formatting
 let businesses = [
   {
@@ -103,13 +106,15 @@ let businesses = [
   }, 
 ];
 
+
+
   return (  
     <div className="HomepageComponent">
       <PersonList />
       <div className="DesktopBusinessList">
         { businesses.map((business) => <BusinessCard business={business} /> )}
       </div>
-        { coords.lat && coords.long ? <DisplayMapFC coordinates={coords} /> : null }
+        { coords.lat && coords.long ? <DisplayMapFC coordinates={demoCoords} /> : null }
       <div className="MobileBusinessList">
         { businesses.map((business) => <BusinessCard business={business} /> )}
       </div>
