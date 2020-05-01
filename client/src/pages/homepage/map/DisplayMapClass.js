@@ -1,5 +1,5 @@
 // src/DisplayMapFC.js
-import {Button} from '@material-ui/core';
+import BusinessCard from '../businessCard.component';
 import * as React from 'react';
 
 
@@ -42,6 +42,8 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     hMap.addObject(marker);
 
     businesses.map((business, index) => {
+    // Create an icon and a marker:
+    
     // Define a variable holding SVG mark-up that defines an icon image:
     const svgMarkup = 
     '<svg ' +
@@ -67,15 +69,30 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
       '>' + 
         (index + 1) + 
       '</text> ' +
-      '</svg>';
-    const {lat, long} = business
-    // Create an icon and a marker:
-    hMap.addObject(new H.map.Marker(
+    '</svg>';
+    
+    const {name, lat, long} = business
+
+    const marker = new H.map.Marker(
       {lat: lat, lng: long}, 
       {icon: 
         new H.map.Icon(svgMarkup)
-      })
-    );
+      });
+
+    marker.setData(name + "<br />test");
+
+    marker.addEventListener("tap", event => {
+      const bubble = new H.ui.InfoBubble(
+        event.target.getGeometry(),
+        {
+          content: event.target.getData()
+        }
+      );
+      ui.addBubble(bubble);
+    }, false);
+
+    // Add marker
+    hMap.addObject(marker);
 
     })
 
