@@ -15,7 +15,7 @@ const { getBusinessDetails } = require('./controllers/business.controllers')
  */
 router.get('/', (request, response) => {
   // destructure request body that way values will be null if not received
-  const { radius, lat, lng, filters } = request.body
+  const { radius, lat, lng, filters } = request.query
   const [filter1, filter2] = filters || []
   const sql = `CALL filterBusiness(?,?,?,?,?)`
   db.query(sql, [radius, lat, lng, filter1, filter2], (err, [results]) => {
