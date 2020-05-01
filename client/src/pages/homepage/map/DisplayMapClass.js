@@ -2,15 +2,13 @@
 
 import * as React from 'react';
 
-export const DisplayMapFC = ( props ) => {
+export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
   // Create a reference to the HTML element we want to put the map on
   const mapRef = React.useRef(null);
 
-  // Initializing coordinates to Null Island
-  let coords = {lat: 0, lng: 0}
-
-  // Loading coordinates from props:
-  coords = {lat: props.coordinates.lat, lng: props.coordinates.long}
+  // Example of the coords object that Here Maps API likes
+  // Ex: Initializing coordinates to Null Island
+  // let coords = {lat: 0, lng: 0}
 
   /**
    * Create the map instance
@@ -29,7 +27,7 @@ export const DisplayMapFC = ( props ) => {
       center: coords,
       zoom: 15,
       pixelRatio: window.devicePixelRatio || 1
-    });
+    }, [coords, businesses]);
 
     // add a resize listener to make sure that the map occupies the whole container
     window.addEventListener('resize', () => hMap.getViewPort().resize());
@@ -48,6 +46,18 @@ export const DisplayMapFC = ( props ) => {
 
     // Add the marker to the map:
     hMap.addObject(marker);
+
+    businesses.map((business) => {
+    const {lat, long} = business
+    // Create an icon and a marker:
+    hMap.addObject(new H.map.Marker(
+      {lat: lat, lng: long}, 
+      {icon: 
+        new H.map.Icon("/Google_Maps_pin.svg")
+      })
+    );
+
+    })
 
     const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(hMap));
 
