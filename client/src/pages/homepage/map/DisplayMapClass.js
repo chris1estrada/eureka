@@ -1,6 +1,8 @@
 // src/DisplayMapFC.js
-
+import {Button} from '@material-ui/core';
 import * as React from 'react';
+
+
 
 export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
   // Create a reference to the HTML element we want to put the map on
@@ -32,14 +34,6 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     // add a resize listener to make sure that the map occupies the whole container
     window.addEventListener('resize', () => hMap.getViewPort().resize());
 
-    // Define a variable holding SVG mark-up that defines an icon image:
-    const svgMarkup = '<svg width="24" height="24" ' +
-    'xmlns="http://www.w3.org/2000/svg">' +
-    '<rect stroke="white" fill="#1b468d" x="1" y="1" width="22" ' +
-    'height="22" /><text x="12" y="18" font-size="12pt" ' +
-    'font-family="Arial" font-weight="bold" text-anchor="middle" ' +
-    'fill="white">H</text></svg>';
-
     // Create an icon and a marker:
     const icon = new H.map.Icon("/Google_Maps_pin.svg"),
     marker = new H.map.Marker(coords, {icon: icon});
@@ -47,13 +41,39 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     // Add the marker to the map:
     hMap.addObject(marker);
 
-    businesses.map((business) => {
+    businesses.map((business, index) => {
+    // Define a variable holding SVG mark-up that defines an icon image:
+    const svgMarkup = 
+    '<svg ' +
+      'width="24" ' +
+      'height="24" ' +
+      'xmlns="http://www.w3.org/2000/svg"' + 
+    '>' +
+      '<rect ' +
+        'stroke="white" ' +
+        'fill="#3f51b5" ' + 
+        'x="1" ' + 
+        'y="1" ' +
+        'width="22" ' +
+       'height="22" ' +
+      '/> ' +
+      '<text ' + 
+      'x="12" ' + 
+      'y="18"  ' +
+      'font-size="12pt" ' +
+      'font-family="Arial" ' +
+      'text-anchor="middle" ' +
+      'fill="white" ' + 
+      '>' + 
+        (index + 1) + 
+      '</text> ' +
+      '</svg>';
     const {lat, long} = business
     // Create an icon and a marker:
     hMap.addObject(new H.map.Marker(
       {lat: lat, lng: long}, 
       {icon: 
-        new H.map.Icon("/Google_Maps_pin.svg")
+        new H.map.Icon(svgMarkup)
       })
     );
 
@@ -73,5 +93,5 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     };
   }, [mapRef]); // This will run this hook every time this ref is updated
 
-  return <div className="map" ref={mapRef} />;
+  return <div className="map" ref={mapRef} ></div>;
 };

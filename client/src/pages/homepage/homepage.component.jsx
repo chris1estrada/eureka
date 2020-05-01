@@ -4,7 +4,6 @@ import getLocation from '../../locationServices.js'
 import { DisplayMapFC } from './map/DisplayMapClass';
 import BusinessCard from './businessCard.component';
 import './homepage.css';
-import PersonList from './test';
 
 const HomePage = () => {
 
@@ -23,8 +22,8 @@ const HomePage = () => {
     getLocation.then((results) => {
       // setCoords({ lat: results.lat, lng: results.long })
       // Setting a dummy location:
-      const lat = 39.7059
-      const lng = -75.1808
+      const lat = 39.7191968
+      const lng = -75.1543866
       setCoords({ lat: lat, lng: lng })
       axios({
         method: 'GET',
@@ -45,98 +44,36 @@ const HomePage = () => {
   // Example mock data for proper formatting
   let demoBusinesses = [
     {
-      business_id: 1,
-      name: "Burger Barn",
-      address: "222 State St, Philadelphia, PA, 19146",
-      phone: "(609) 456-7890",
-      hours: "11am - 12am Sunday - Thursday",
-      hours2: "10am - 2am Friday - Saturday",
-      tags: "American, Pub",
-      description: "This is the description of the business.",
-      dealsTime: "Monday 3pm - 6pm",
-      deals: "$2 Tacos $3 Corona",
-      promosTime: "Tuesday 3pm - 6pm",
-      promos: "1/2 price wings $2 domestics"
+        business_id: 1,
+        name: "McDonalds",
+        address: "656 Delsea Dr, Glassboro, NJ 08028",
+        cuisine: "fast food",
+        open: "false",
+        lat: 39.7059,
+        long: -75.1808,
+        image: "/images/image.png",
+        distance: 0
     },
-
     {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-
-    {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-
-    {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-
-    {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-
-    {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-
-    {
-      business_id: 2,
-      name: "El Mariachi Mexican Restaurant",
-      address: "512 Delsea Dr, Glassboro, NJ 08028",
-      cuisine: "Mexican",
-      lat: null,
-      long: null,
-      image: null,
-      distance: null,
-    },
-  ];
-
-
-
+        business_id: 7,
+        name: "Wendys",
+        address: "620 Woodbury Glassboro Rd, Sewell, NJ 08080",
+        cuisine: "fast food",
+        open: "false",
+        lat: 39.7307,
+        long: -75.1314,
+        image: "images/testing/test.jpg",
+        distance: 3.135449827421824
+    }
+];
   return (
     <div className="HomepageComponent">
-      <PersonList />
       <div className="DesktopBusinessList">
-        {businesses.length !== 0 ? businesses.map((business) => <BusinessCard business={business} />) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
       </div>
       {coords.lat && coords.lng && businesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={businesses} /> : null}
       <div className="MobileBusinessList">
-        {businesses.length !== 0 ? businesses.map((business) => <BusinessCard business={business} />) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1}/>) : null}
       </div>
     </div>
   );
