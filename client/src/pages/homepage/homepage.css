@@ -1,0 +1,78 @@
+/*
+    homepage.css
+    ===================
+    @author Matthew Tam
+*/
+
+/*  The map, for some reason, has an element that seems to
+    overflow.  I suspect this has something to do with the
+    CSS from HERE Maps API, as this only happens when I set
+    the height of the "map" too high.  A map height of 400px
+    seems to be ok and does not cause this problem on my
+    1080px height monitor.
+*/
+html, body {
+    max-width:  100%;
+    overflow-x: hidden;
+}
+
+.map {
+    display:    inline-block;
+    position:   absolute;
+    width:      calc(100vw - 300px);
+    height:     calc(100vh - 64px);
+}
+
+.MobileBusinessList {
+    display:    none;
+    height:     30vh;
+    overflow-y: scroll;
+}
+.MobileBusinessList::-webkit-scrollbar { width: 5px;}
+.MobileBusinessList::-webkit-scrollbar-track {  background: transparent;}
+.MobileBusinessList::-webkit-scrollbar-thumb {  background: #888; 
+                                                border-radius: 10px;}
+.MobileBusinessList::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.DesktopBusinessList {
+    display:    inline-block;
+    width:      300px;
+    height:     calc(100vh - 64px);
+    overflow-y: scroll;
+}
+.DesktopBusinessList::-webkit-scrollbar { width: 5px;}
+.DesktopBusinessList::-webkit-scrollbar-track { background: transparent;}
+.DesktopBusinessList::-webkit-scrollbar-thumb { background: #888; 
+                                                border-radius: 10px;}
+.DesktopBusinessList::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.HomepageComponent {
+    position:   relative;
+    height:     calc(100vh - 64px);
+}
+
+@media only screen and (max-width: 600px) {
+    html {
+        font-size: 75%;
+    }
+
+    .map {
+        display:    block;
+        position:   static;
+        width:      100vw;
+        height:     calc(100vh - (30vh + 56px));
+    }
+
+    .MobileBusinessList {
+        display: block;
+    }
+
+    .DesktopBusinessList {
+        display: none;
+    }
+
+    .HomepageComponent {
+        height: calc(100vh - 56px);
+    }
+    
+}
