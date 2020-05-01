@@ -71,7 +71,7 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
       '</text> ' +
     '</svg>';
     
-    const {name, lat, long} = business
+    const {name, address, cuisine, lat, long} = business
 
     const marker = new H.map.Marker(
       {lat: lat, lng: long}, 
@@ -79,7 +79,7 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
         new H.map.Icon(svgMarkup)
       });
 
-    marker.setData(name + "<br />test");
+    marker.setData(name + "<br />" + address + "<br />" + cuisine);
 
     marker.addEventListener("tap", event => {
       const bubble = new H.ui.InfoBubble(
