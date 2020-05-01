@@ -1,6 +1,6 @@
 CREATE DEFINER=`administrator`@`localhost` PROCEDURE `updateBusiness`(
-    IN BID INT(11), IN `name` VARCHAR(255), IN address VARCHAR(255), IN lat FLOAT, IN `long` FLOAT, 
-    IN menu VARCHAR(255), IN cuisine VARCHAR(45), IN `description` VARCHAR(1000), IN isAdult TINYINT(4))
+	IN BID INT(11), IN `name` VARCHAR(255), IN address VARCHAR(255), IN lat FLOAT, IN `long` FLOAT, 
+    IN menu VARCHAR(255), IN cuisine VARCHAR(45), IN `description` VARCHAR(1000), IN isAdult TINYINT(4), IN phone_number Char(12))
 BEGIN
 	# Procedure that receives new data for an existing business and updates entrys that are not null
     # For numeric types (lat, long and is Adult) the word 'null' needs to be passed from the client side
@@ -36,6 +36,10 @@ BEGIN
 		IF isAdult IS NOT NULL THEN
 			UPDATE businesses b SET b.isAdult = isAdult 
 			WHERE b.business_id = BID; 
+		END IF;
+         IF phone_number IS NOT NULL AND phone_number != '' THEN
+			UPDATE businesses b SET b.phone_number = phone_number 
+			WHERE b.business_id = BID;
 		END IF;
 	END IF;
 END

@@ -46,7 +46,7 @@ class UserRegistration extends Component {
   }
 
   handleFirstNameChange = e => {
-    this.setState({ first_name: e.target.value });
+    this.setState({ first_name: e.target.value }); 
   }
 
   handleLastNameChange = e => {
@@ -66,7 +66,9 @@ class UserRegistration extends Component {
     matches ? alert("MATCHED") : alert("NO MATCH");
 
     // Post data to '/accounts/users' if passwords match
-    if (matches) {
+
+    if(matches) {
+
       const user = {
         username: this.state.username,
         password: this.state.password,
@@ -78,14 +80,24 @@ class UserRegistration extends Component {
       console.log(user);
 
 
+
       axios.post('http://localhost:5000/api/v1/accounts/users', { ...user })
+
+        
+      /*
+        axios.post('http://localhost:5000/api/v1/accounts/users', { user })
+
         .then(result => {
           console.log(result);
           console.log(result.data);
         })
+
         .catch(err => {
           console.log(err);
         })
+
+      */
+
 
     }
 
@@ -95,40 +107,42 @@ class UserRegistration extends Component {
     return (
       <div className="center">
 
-        <h1 className="titleCenter">User Registration</h1>
 
-        <form onSubmit={this.handleSubmit}>
+      <h1 className="titleCenter">User Registration</h1>
 
-          <div className="container">
+      <form onSubmit={this.handleSubmit}>
 
-            <label><b>Enter Email</b></label>
-            <input type="email" placeholder="Enter Email" username="uemail" onChange={this.handleEmailChange} required />
+      <div className="container">
 
-            <label><b>Enter Password</b></label>
-            <input type="password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-              title="Must contain at least 8 characters, one uppercase character, one lowercase character, one number, and one special character"
-              placeholder="Enter Password" password="pwd" onChange={this.handlePasswordField1Change} required />
+        <label><b>Enter Email</b></label>
+        <input type="email" placeholder="Enter Email" username="uemail" onChange={this.handleEmailChange} required />
 
-            <label><b>Retype Password</b></label>
-            <input type="password" placeholder="Retype Same Password" password="pwd" onChange={this.handlePasswordField2Change}
-              required />
+        <label><b>Enter Password</b></label>
+        <input type="password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+        title="Must contain at least 8 characters, one uppercase character, one lowercase character, one number, and one special character" 
+        placeholder="Enter Password" password="pwd" onChange={this.handlePasswordField1Change} required />
 
-            <label><b>First Name</b></label>
-            <input type="password1" placeholder="Enter First Name" name="fname" onChange={this.handleFirstNameChange} required />
+        <label><b>Retype Password</b></label>
+        <input type="password" placeholder="Retype Same Password" password="pwd" onChange={this.handlePasswordField2Change}
+        required />
 
-            <label><b>Last Name</b></label>
-            <input type="password1" placeholder="Enter Last Name" name="lname" onChange={this.handleLastNameChange} required />
+        <label><b>First Name</b></label>
+        <input type="password1" placeholder="Enter First Name" name="fname" onChange={this.handleFirstNameChange} required />
 
-            <label><b>Date of Birth</b></label>
-            <input type="date" name="dob" onChange={this.handleDOBChange} required />
+        <label><b>Last Name</b></label>
+        <input type="password1" placeholder="Enter Last Name" name="lname" onChange={this.handleLastNameChange} required />
 
-            <button type="submit">Create Account</button>
-
-          </div>
-
-        </form>
+        <label><b>Date of Birth</b></label>
+        <input type="date" name="dob" onChange={this.handleDOBChange} required />
+        
+        <button type="submit">Create Account</button>
 
       </div>
+
+    </form>
+
+    </div>
+
     );
   }
 }
