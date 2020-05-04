@@ -76,7 +76,10 @@ const BusinessForm = (props) => {
   const handleSubmit = e => {
     e.preventDefault()
     if (error) return
-
+    if (cuisine === 0) {
+      setError("Choose a Cuisine")
+      return
+    }
     // Get lat and long
     const fd = new FormData();
     const address = street + ', ' + city + ', ' + state + zip
@@ -123,14 +126,14 @@ const BusinessForm = (props) => {
         <FormLabel component='legend'>Cuisine</FormLabel>
         <FormControl>
           <InputLabel htmlFor='cuisine-select'>Cuisine</InputLabel>
-          <Select value={cuisine} inputProps={{ name: 'cuisine', id: 'cuisine-select' }} onChange={e => setCuisine(e.target.value)}>
-            <option aria-label="None" value="" />
-            <option value={1}>American</option>
-            <option value={2}>Thai</option>
-            <option value={3}>Asian</option>
-            <option value={4}>Mexican</option>
-            <option value={5}>Jamaican</option>
-            <option value={6}>German</option>
+          <Select value={cuisine} inputProps={{ name: 'cuisine', id: 'cuisine-select', defaultValue: 0 }} onChange={e => setCuisine(e.target.value)}>
+            <option value={0} disabled>Choose One</option>
+            <option value='American'>American</option>
+            <option value='Thai'>Thai</option>
+            <option value='Japanese'>Japanese</option>
+            <option value='Mexican'>Mexican</option>
+            <option value='Jamaican'>Jamaican</option>
+            <option value='German'>German</option>
           </Select>
         </FormControl>
         <Divider style={{ margin: '8px' }} />

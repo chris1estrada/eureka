@@ -70,7 +70,7 @@ router.post('/users', [
 
 // Create a new business
 router.post(
-  '/businesses', checkToken,
+  '/businesses',
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -115,23 +115,17 @@ router.post(
     //   return response.status(422).json({ errors: errors.array() })
     // }
     try {
-      console.log(request.body);
-      console.log(request.files);
-      console.log('==========================================================');
       const { uid, name, address, cuisine, description, isAdult, owner_id, tel } = request.body
       const { lat, lng } = await getGeocode(address)
       // Use the user_id to retrieve the username and password
       const sql1 = 'CALL selectUser(?)'
       db.query(sql1, [request.body.uid], (err, results, fields) => {
         const [[user]] = results
-        console.log(user);
+
         if (err) return response.json({ error: err.message })
         const { email, password } = user
         const menu = request.files.menu[0].location
         const photos = request.files.photo
-        console.log(photos);
-        console.log(menu);
-        console.log('==========================================================');
 
         // Create the business and capture the newly created BID
         const sql2 = 'CALL insertBusiness(?,?,?,?,?,?,?,?,?,?,?,?)'
@@ -153,9 +147,6 @@ router.post(
           ],
           async (err, results, fields) => {
             if (err) { return response.json({ error: err }) }
-            console.log(results)
-            console.log('==========================================================');
-
             const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
@@ -167,22 +158,23 @@ router.post(
               })
             }
             // If the user provided any deals, insert them into the database
+            // Procedure requires null for some fields to distinguish between the types and how they're stored
             let deals = request.body.deals
-            console.log(deals);
-            console.log('==========================================================');
-
             if (deals) {
               deals = await JSON.parse(request.body.deals)
-              const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
-              deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
+              let sql4 = ''
+              deals.forEach(({ description, day, starts, ends, }) => {
+                if (day) {
+                  sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
+                } else {
+                  sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
+                }
                 db.query(sql4, [
                   BID,
                   description,
-                  type, day,
-                  start_time,
-                  end_time,
-                  start_datetime,
-                  end_datetime
+                  day ? day : null,
+                  starts,
+                  ends,
                 ],
                   (err, results) => {
                     if (err) { console.error(err.stack) }
@@ -191,9 +183,6 @@ router.post(
             }
             // Insert business hours of operation into the database
             const hours = await JSON.parse(request.body.hours)
-            console.log(hours);
-            console.log('==========================================================');
-
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, starts, ends }) => {
               db.query(sql5, [BID, day, starts, ends], (err, results) => {
@@ -210,7 +199,7 @@ router.post(
 )
 
 
-router.get('/businesses/:business_id', async (request, response) => {
+router.get('/businesses/:business_id', checkToken, async (request, response) => {
 
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
@@ -233,13 +222,13 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 
 
 router.put(
-  '/businesses/:business_id', 
+  '/businesses/:business_id',
   (request, response, next) => {
-  /**
-   * middleware to handle multipart-form and file uploads
-   * uploads files to AWS S3 and separates request form into
-   * request.body and request.files
-   */
+    /**
+     * middleware to handle multipart-form and file uploads
+     * uploads files to AWS S3 and separates request form into
+     * request.body and request.files
+     */
     upload(request, response, (err) => {
       if (request.fileValidationError) {
         return response.send(request.fileValidationError);
@@ -255,24 +244,24 @@ router.put(
       }
     })
   },
-  [ 
-  //may need to add a param for business_id, depending on if we ask for user to input
-  body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
-  body('name', 'Field required').not().isEmpty(), 
-  body('tel')
-    .not()
-    .isEmpty()
-    .trim()
-    .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
-    .withMessage('Telephone number not a valid format'),
-  body(['address', 'cuisine'], 'Field required')
-    .not()
-    .isEmpty(),
-  body(['lat', 'lng'], 'Field required').notEmpty().toFloat(),
-  body('menu').not().isEmpty().trim(),
-  body('description'),
-  body('isAdult').toBoolean(), //must be an int of 0 or 1
-  ], 
+  [
+    //may need to add a param for business_id, depending on if we ask for user to input
+    body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
+    body('name', 'Field required').not().isEmpty(),
+    body('tel')
+      .not()
+      .isEmpty()
+      .trim()
+      .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
+      .withMessage('Telephone number not a valid format'),
+    body(['address', 'cuisine'], 'Field required')
+      .not()
+      .isEmpty(),
+    body(['lat', 'lng'], 'Field required').notEmpty().toFloat(),
+    body('menu').not().isEmpty().trim(),
+    body('description'),
+    body('isAdult').toBoolean(), //must be an int of 0 or 1
+  ],
   (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
@@ -281,7 +270,7 @@ router.put(
     try {
       const { uid, name, address, lat, lng, cuisine, description, isAdult, tel } = request.body
       const sql1 = 'CALL selectUser(?)'
-      db.query(sql1, [request.body.uid], (err, [[user]]) =>   {
+      db.query(sql1, [request.body.uid], (err, [[user]]) => {
         if (err) return response.json({ error: err.message });
         const { email, password } = user;
         const menu = request.files.menu[0].location;
@@ -301,10 +290,10 @@ router.put(
             description,
             isAdult,
             tel
-          ], 
+          ],
           async (err, results) => {
-            if(err) response.status(422).json({ error: err.essage })
-            const  BID  = results
+            if (err) response.status(422).json({ error: err.essage })
+            const BID = results
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
@@ -341,12 +330,12 @@ router.put(
             //  })
             //})
             response.status(200).json('Business Updated')
-            })
           })
-        } catch (err) {
-        response.status(422).json({ error: err })
-        }
-})
+      })
+    } catch (err) {
+      response.status(422).json({ error: err })
+    }
+  })
 
 router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
   // update info for a particular user based on their unique user id
