@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import {
   FormLabel,
   Divider,
@@ -38,6 +39,7 @@ const OutlinedTextField = (props) => (
  * @todo Add input for menu: single pdf. Add input multiple images, 5 max.
  */
 const BusinessForm = (props) => {
+  const history = useHistory()
   const [error, setError] = useState('')
   // Values for form data and form default state
   const [name, setName] = useState('')
@@ -56,22 +58,34 @@ const BusinessForm = (props) => {
   const [menu, setMenu] = useState([])
   const [photos, setPhotos] = useState([])
 
-  console.log(props.uid)
-  const test = () => {
-    console.log(name);
-    console.log(street);
-    console.log(city);
-    console.log(state);
-    console.log(zip);
-    console.log(tel);
-    console.log(hours);
-    console.log(description);
-    console.log(cuisine);
-    console.log(recurringDeals);
-    console.log(limitedDeals);
-    console.log(menu);
-    console.log(photos);
+  // Ensure tel is entered in the right format
+  const handleTelChange = (e) => {
+    const pattern = /^[2-9][0-9]{0,2}-?[0-9]{0,3}-?[0-9]{0,4}$/
+    const val = e.target.value
+    if (pattern.test(val) || val === '') {
+      if (val.length === 3 || val.length === 7) {
+        setTel(val + '-')
+      } else {
+        setTel(val)
+      }
+    }
   }
+
+  // const test = () => {
+  //   console.log(name);
+  //   console.log(street);
+  //   console.log(city);
+  //   console.log(state);
+  //   console.log(zip);
+  //   console.log(tel);
+  //   console.log(hours);
+  //   console.log(description);
+  //   console.log(cuisine);
+  //   console.log(recurringDeals);
+  //   console.log(limitedDeals);
+  //   console.log(menu);
+  //   console.log(photos);
+  // }
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
@@ -100,13 +114,16 @@ const BusinessForm = (props) => {
         fd.append('photo', photos[0])
       }
     }
-    test()
     axios({
       method: 'post',
       url: 'http://localhost:3000/api/v1/accounts/businesses',
       data: fd
     })
-      .then(res => { console.log(res.data) })
+      .then(res => {
+        if (res.status === 200) {
+          history.push(`/accounts/businesses/${res.data.bid}`)
+        }
+      })
       .catch(err => console.log(err))
   }
 
@@ -120,7 +137,7 @@ const BusinessForm = (props) => {
           <OutlinedTextField value={city} onChange={event => setCity(event.target.value)} id='city' label='City' type='text' />
           <OutlinedTextField value={state} onChange={event => setState(event.target.value)} id='state' label='State' type='text' />
           <OutlinedTextField value={zip} onChange={event => setZip(event.target.value)} id='zip' label='Zip' type='text' />
-          <OutlinedTextField value={tel} onChange={event => setTel(event.target.value)} id='tel' label='Telephone' type='tel' />
+          <OutlinedTextField value={tel} onChange={handleTelChange} id='tel' label='Telephone' type='tel' />
         </FormGroup>
         <Divider style={{ margin: '8px' }} />
         <FormLabel component='legend'>Cuisine</FormLabel>
