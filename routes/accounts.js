@@ -17,6 +17,7 @@ const multer = require('multer')
 const { upload } = require('../middlewares/multer')
 
 const db = require('../db');
+
 const { createHash } = require('../utils/auth')
 const { checkToken } = require('../middlewares/auth')
 
@@ -336,19 +337,5 @@ router.put(
       response.status(422).json({ error: err })
     }
   })
-
-router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
-  // update info for a particular user based on their unique user id
-})
-
-router.patch('/users/:user_id', checkToken, (request, response) => {
-  // send back info for a particular business based on their unique business id
-})
-
-router.patch('/users/:user_id/recover', checkToken, (request, response) => {
-  // set a temporary password for a particular user based on their unique user id
-  // and send an email to use it to change
-  // TBD IF WE NEED
-})
 
 module.exports = router
