@@ -64,7 +64,7 @@ router.post('/users', [
       request.body.last_name,
     ],
     (err, results) => {
-      if (err) response.status(422).json({ error: err.message })
+      if (err) response.status(422).json({ error: err.sqlMessage })
       return response.status(200).json(results)
     })
 })
@@ -123,7 +123,7 @@ router.post(
       db.query(sql1, [request.body.uid], (err, results, fields) => {
         const [[user]] = results
 
-        if (err) return response.json({ error: err.message })
+        if (err) return response.json({ error: err.sqlMessage })
         const { email, password } = user
         const menu = request.files.menu[0].location
         const photos = request.files.photo
@@ -147,14 +147,14 @@ router.post(
             tel
           ],
           async (err, results, fields) => {
-            if (err) { return response.json({ error: err }) }
+            if (err) { return response.json({ error: err.sqlMessage }) }
             const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
                 db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
-                  if (err) return response.json({ error: err })
+                  if (err) return response.json({ error: err.sqlMessage })
                 })
               })
             }
@@ -178,7 +178,7 @@ router.post(
                   ends,
                 ],
                   (err, results) => {
-                    if (err) { console.error(err.stack) }
+                    if (err) { response.json({ error: err.sqlMessage }) }
                   })
               })
             }
@@ -187,13 +187,14 @@ router.post(
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, starts, ends }) => {
               db.query(sql5, [BID, day, starts, ends], (err, results) => {
-                if (err) return response.json({ error: err })
+                if (err) return response.json({ error: err.sqlMessage })
               })
             })
             return response.status(200).json({ bid: BID, message: 'Business Created' })
           })
       })
     } catch (err) {
+      console.error(err.stack);
       response.status(422).json({ error: err.stack })
     }
   }
@@ -338,13 +339,14 @@ router.put(
           const sql5 = 'CALL updateBusinessHours(?,?,?,?)'
           hours.forEach(({ day, starts, ends }) => {
             db.query(sql5, [business_id, day, starts, ends], (err, results) => {
-              if (err) return response.json({ error: err })
+              if (err) return response.json({ error: err.sqlMessage })
             })
           })
           response.status(200).json('Business Updated')
         })
     } catch (err) {
-      response.status(422).json({ error: err })
+      console.error(err.stack)
+      response.status(422).json({ error: err.stack })
     }
   })
 
