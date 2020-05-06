@@ -3,7 +3,7 @@ import moment from 'moment'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
-import { KeyboardDateTimePicker, TimePicker, KeyboardTimePicker } from '@material-ui/pickers'
+import { DateTimePicker, TimePicker } from '@material-ui/pickers'
 import {
   Divider,
   Select,
@@ -52,7 +52,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
       {
 
         isDateTime ?
-          <KeyboardDateTimePicker
+          <DateTimePicker
             label={label}
             helperText={errors.timeError}
             autoOk
@@ -63,7 +63,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
             showTodayButton
           />
           :
-          <KeyboardTimePicker
+          <TimePicker
             label={label}
             autoOk
             error={errors.timeError}
@@ -84,8 +84,8 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
     setDescription("")
   }
   const onAddItem = () => {
-    const startTime = moment(start).day()
-    const endTime = moment(end).day()
+    const startTime = moment(start)
+    const endTime = moment(end)
     if (startTime > endTime) {
       setErrors({ timeError: 'End date cannot be before start date' })
     } else {
