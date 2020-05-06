@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import Img from 'react-image'
 import {
   FormLabel,
   Divider,
@@ -210,6 +211,9 @@ const BusinessForm = (props) => {
 
         <FormLabel component='legend'>Images (5 max) </FormLabel>
         <FormHelperText error={true}>{error ? error.photos : ''}</FormHelperText>
+        {
+          [...photos].map(photo => <Img src={URL.createObjectURL(photo)} width={150} height={125} />)
+        }
         <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
         <Divider style={{ margin: '8px' }} />
 
