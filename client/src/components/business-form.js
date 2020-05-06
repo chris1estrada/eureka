@@ -88,10 +88,8 @@ const BusinessForm = (props) => {
   }
 
   const validateForm = () => {
-    let isValid = true
-    console.log(!!menu)
-    console.log(hours)
     // if any of the required fields are empty display an error for each
+    let isValid = true;
     const errs = {
       name: !!name || "Name is required",
       street: !!street || "Street is required",
@@ -105,7 +103,12 @@ const BusinessForm = (props) => {
       photos: photos.length < 6 || "Too many photos selected, 5 max"
     }
     setError(errs)
-    console.log(errs);
+    for (let [key, value] of Object.entries(errs)) {
+      if (value !== true) {
+        isValid = false
+      }
+    }
+    return isValid
   }
 
   // const test = () => {
@@ -126,42 +129,40 @@ const BusinessForm = (props) => {
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
-    console.log('submitted');
-    validateForm()
-    if (error) return
-
-    // construct the FormData object to be sent to the backend
-    const fd = new FormData();
-    const address = street + ', ' + city + ', ' + state + zip
-    const allDeals = [...limitedDeals, ...recurringDeals]
-    fd.append('uid', props.uid)
-    fd.append('business_id', props.bid || null)
-    fd.append('name', name)
-    fd.append('address', address)
-    fd.append('cuisine', cuisine)
-    fd.append('tel', tel)
-    fd.append('description', description)
-    fd.append('isAdult', 0)
-    fd.append('deals', JSON.stringify(allDeals))
-    fd.append('hours', JSON.stringify(hours))
-    fd.append('menu', menu)
-    if (photos.length > 0) {
-      for (let i = 0; i < photos.length; i++) {
-        fd.append('photo', photos[0])
-      }
-    }
-    axios({
-      method: 'post',
-      url: 'http://localhost:3000/api/v1/accounts/businesses',
-      data: fd
-    })
-      .then(res => {
-        if (res.status === 200) {
-          alert(res.message + ', Business ID: ' + res.bid)
-          // history.push(`/accounts/businesses/${res.data.bid}`)
+    if (validateForm()) {
+      // construct the FormData object to be sent to the backend
+      const fd = new FormData();
+      const address = street + ', ' + city + ', ' + state + zip
+      const allDeals = [...limitedDeals, ...recurringDeals]
+      fd.append('uid', props.uid)
+      fd.append('business_id', props.bid || null)
+      fd.append('name', name)
+      fd.append('address', address)
+      fd.append('cuisine', cuisine)
+      fd.append('tel', tel)
+      fd.append('description', description)
+      fd.append('isAdult', 0)
+      fd.append('deals', JSON.stringify(allDeals))
+      fd.append('hours', JSON.stringify(hours))
+      fd.append('menu', menu)
+      if (photos.length > 0) {
+        for (let i = 0; i < photos.length; i++) {
+          fd.append('photo', photos[0])
         }
+      }
+      axios({
+        method: 'post',
+        url: 'http://localhost:3000/api/v1/accounts/businesses',
+        data: fd
       })
-      .catch(err => console.log(err))
+        .then(res => {
+          if (res.status === 200) {
+            alert(res.message + ', Business ID: ' + res.bid)
+            // history.push(`/accounts/businesses/${res.data.bid}`)
+          }
+        })
+        .catch(err => console.log(err))
+    }
   }
 
   return (
