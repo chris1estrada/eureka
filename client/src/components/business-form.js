@@ -212,8 +212,8 @@ const BusinessForm = (props) => {
         <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
         <Divider style={{ margin: '8px' }} />
 
-        <FormHelperText error={true}>{error ? error.menu : ''}</FormHelperText>
         <FormLabel component='legend'>Menu</FormLabel>
+        <FormHelperText error={true}>{error ? error.menu : ''}</FormHelperText>
         <Input type="file" inputProps={{ multiple: true, accept: 'application/pdf' }} onChange={event => setMenu(event.target.files[0])} />
         <Divider style={{ margin: '8px' }} />
 
