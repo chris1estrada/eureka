@@ -40,22 +40,22 @@ const OutlinedTextField = (props) => (
  */
 const BusinessForm = (props) => {
   const history = useHistory()
-  const [error, setError] = useState('')
+  const [error, setError] = useState()
   // Values for form data and form default state
-  const [name, setName] = useState('')
-  const [street, setStreet] = useState('')
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
-  const [zip, setZip] = useState('')
-  const [tel, setTel] = useState('')
+  const [name, setName] = useState()
+  const [street, setStreet] = useState()
+  const [city, setCity] = useState()
+  const [state, setState] = useState()
+  const [zip, setZip] = useState()
+  const [tel, setTel] = useState()
   const [hours, setHours] = useState([])
-  const [description, setDescription] = useState('')
-  const [cuisine, setCuisine] = useState(0)
+  const [description, setDescription] = useState()
+  const [cuisine, setCuisine] = useState()
   // combine these into a "deals" array when submitting
   const [recurringDeals, setRecurringDeals] = useState([])
   const [limitedDeals, setLimitedDeals] = useState([])
 
-  const [menu, setMenu] = useState([])
+  const [menu, setMenu] = useState()
   const [photos, setPhotos] = useState([])
 
   // Ensure tel is entered in the right format
@@ -69,6 +69,43 @@ const BusinessForm = (props) => {
         setTel(val)
       }
     }
+  }
+  // Validate zipcode format before changing
+  const handleZipChange = (e) => {
+    const val = e.target.value
+    const pattern = /^[0-9]{0,5}$/
+    if (pattern.test(val) || val === '') {
+      setZip(val)
+    }
+  }
+  //Validate state format before changing
+  const handleStateChange = (e) => {
+    const val = e.target.value.toUpperCase()
+    const pattern = /^$|^[A-Z]{0,2}$/
+    if (pattern.test(val)) {
+      setState(val)
+    }
+  }
+
+  const validateForm = () => {
+    let isValid = true
+    console.log(!!menu)
+    console.log(hours)
+    // if any of the required fields are empty display an error for each
+    const errs = {
+      name: !!name || "Name is required",
+      street: !!street || "Street is required",
+      city: !!city || "City is required",
+      state: !!state || "State is required",
+      zip: !!zip || "Zip code is required",
+      tel: !!tel || "Telephone number is required",
+      cuisine: !!cuisine || "Cuisine is required",
+      menu: !!menu || "Menu is required",
+      hours: hours.length > 0 || "Hours of operation are required",
+      photos: photos.length < 6 || "Too many photos selected, 5 max"
+    }
+    setError(errs)
+    console.log(errs);
   }
 
   // const test = () => {
@@ -89,12 +126,11 @@ const BusinessForm = (props) => {
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
+    console.log('submitted');
+    validateForm()
     if (error) return
-    if (cuisine === 0) {
-      setError("Choose a Cuisine")
-      return
-    }
-    // Get lat and long
+
+    // construct the FormData object to be sent to the backend
     const fd = new FormData();
     const address = street + ', ' + city + ', ' + state + zip
     const allDeals = [...limitedDeals, ...recurringDeals]
@@ -121,7 +157,8 @@ const BusinessForm = (props) => {
     })
       .then(res => {
         if (res.status === 200) {
-          history.push(`/accounts/businesses/${res.data.bid}`)
+          alert(res.message + ', Business ID: ' + res.bid)
+          // history.push(`/accounts/businesses/${res.data.bid}`)
         }
       })
       .catch(err => console.log(err))
@@ -132,17 +169,29 @@ const BusinessForm = (props) => {
       <form onSubmit={handleSubmit}>
         <FormLabel component='legend'>Business Info</FormLabel>
         <FormGroup >
+          <FormHelperText error={true}>{error ? error.name : ''}</FormHelperText>
           <OutlinedTextField value={name} onChange={event => setName(event.target.value)} id='name' label='Business name' type='text' />
+
+          <FormHelperText error={true}>{error && error.street}</FormHelperText>
           <OutlinedTextField value={street} onChange={event => setStreet(event.target.value)} id='street' label='Street' type='text' />
+
+          <FormHelperText error={true}>{error ? error.city : ''}</FormHelperText>
           <OutlinedTextField value={city} onChange={event => setCity(event.target.value)} id='city' label='City' type='text' />
-          <OutlinedTextField value={state} onChange={event => setState(event.target.value)} id='state' label='State' type='text' />
-          <OutlinedTextField value={zip} onChange={event => setZip(event.target.value)} id='zip' label='Zip' type='text' />
+
+          <FormHelperText error={true}>{error ? error.state : ''}</FormHelperText>
+          <OutlinedTextField value={state} onChange={handleStateChange} id='state' label='State' type='text' />
+
+          <FormHelperText error={true}>{error ? error.zip : ''}</FormHelperText>
+          <OutlinedTextField value={zip} onChange={handleZipChange} id='zip' label='Zip' type='text' />
+
+          <FormHelperText error={true}>{error ? error.tel : ''}</FormHelperText>
           <OutlinedTextField value={tel} onChange={handleTelChange} id='tel' label='Telephone' type='tel' />
         </FormGroup>
         <Divider style={{ margin: '8px' }} />
         <FormLabel component='legend'>Cuisine</FormLabel>
         <FormControl>
-          <InputLabel htmlFor='cuisine-select'>Cuisine</InputLabel>
+
+          <FormHelperText error={true}>{error ? error.cuisine : ''}</FormHelperText>
           <Select value={cuisine} inputProps={{ name: 'cuisine', id: 'cuisine-select', defaultValue: 0 }} onChange={e => setCuisine(e.target.value)}>
             <option value={0} disabled>Choose One</option>
             <option value='American'>American</option>
@@ -157,23 +206,27 @@ const BusinessForm = (props) => {
         <FormLabel component='legend'>Description</FormLabel>
         <TextareaAutosize id='description' style={{ width: '100%' }} rowsMax={5} rowsMin={5} onChange={e => setDescription(e.target.value)} />
         <Divider style={{ margin: '8px' }} />
+
         <FormLabel component='legend'>Images (5 max) </FormLabel>
+        <FormHelperText error={true}>{error ? error.photos : ''}</FormHelperText>
         <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
         <Divider style={{ margin: '8px' }} />
+
+        <FormHelperText error={true}>{error ? error.menu : ''}</FormHelperText>
         <FormLabel component='legend'>Menu</FormLabel>
         <Input type="file" inputProps={{ multiple: true, accept: 'application/pdf' }} onChange={event => setMenu(event.target.files[0])} />
-
-
-
-
-        <FormHelperText error={true}>{error}</FormHelperText>
         <Divider style={{ margin: '8px' }} />
+
         <FormLabel component='legend'>Hours</FormLabel>
+        <FormHelperText error={true}>{error ? error.hours : ''}</FormHelperText>
         <DayEventList items={hours} dateTime="false" description="false" onAdd={data => setHours(data)} onRemove={data => setHours(data)} />
+
         <FormLabel component='legend'>Specials</FormLabel>
         <DayEventList items={recurringDeals} dateTime="false" description="true" onAdd={data => setRecurringDeals(data)} onRemove={data => setRecurringDeals(data)} />
+
         <FormLabel component='legend'>Events</FormLabel>
         <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => setLimitedDeals(data)} onRemove={data => setLimitedDeals(data)} />
+
         <Button variant="contained" color='primary' type='submit'>Submit</Button>
       </form>
     </Box >
