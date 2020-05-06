@@ -190,7 +190,7 @@ router.post(
                 if (err) return response.json({ error: err })
               })
             })
-            return response.status(200).json('Business Created')
+            return response.status(200).json({ bid: BID, message: 'Business Created' })
           })
       })
     } catch (err) {
