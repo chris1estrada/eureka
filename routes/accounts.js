@@ -224,6 +224,7 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 
 router.put(
   '/businesses/:business_id',
+  checkToken,
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -270,69 +271,78 @@ router.put(
     }
     try {
       const { uid, name, address, lat, lng, cuisine, description, isAdult, tel } = request.body
-      const sql1 = 'CALL selectUser(?)'
-      db.query(sql1, [request.body.uid], (err, [[user]]) => {
-        if (err) return response.json({ error: err.message });
-        const { email, password } = user;
-        const menu = request.files.menu[0].location;
-        const photos = request.files.photo;
-        // update info for a particular business based on their unique business id
-        const sql2 = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)';
-        db.query(
-          sql2,
-          [
-            request.params.business_id,
-            name,
-            address,
-            lat,
-            lng,
-            menu,
-            cuisine,
-            description,
-            isAdult,
-            tel
-          ],
-          async (err, results) => {
-            if (err) response.status(422).json({ error: err.essage })
-            const BID = results
-            if (photos) {
-              const sql3 = 'CALL insertImage(?,?,?)'
-              photos.forEach((photo) => {
-                db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
-                  if (err) return response.json({ error: err })
+      const { business_id } = request.params
+      const menu = request.files.menu[0].location;
+      const photos = request.files.photo;
+
+      // update info for a particular business based on their unique business id
+      const sql2 = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)';
+      db.query(
+        sql2,
+        [
+          business_id,
+          name,
+          address,
+          lat,
+          lng,
+          menu,
+          cuisine,
+          description,
+          isAdult,
+          tel
+        ],
+        async (err, results) => {
+          if (err) response.status(422).json({ error: err.sqlMessage })
+          if (photos) {
+            const stmt = 'CALL clearImages(?)'
+            db.query(stmt, [business_id], (err, results) => {
+              if (err) return response.json({ error: err.sqlMessage })
+            })
+            const sql3 = 'CALL insertImage(?,?,?)'
+            photos.forEach((photo) => {
+              db.query(sql3, [business_id, photo.originalname, photo.location], (err, results) => {
+                if (err) return response.json({ error: err.sqlMessage })
+              })
+            })
+          }
+          // If the user provided any deals clear old deals and insert new deals into the database
+          if (request.body.deals) {
+            const deals = await JSON.parse(request.body.deals)
+            const stmt2 = 'CALL clearDeals(?)'
+            db.query(stmt2, [business_id], (err, results) => {
+              if (err) return response.json({ error: err.sqlMessage })
+            })
+            // Each deal type requires certain fields to be null so generate the procedure call dynamically
+            let sql4 = ''
+            deals.forEach(({ description, day, starts, ends, }) => {
+              if (day) {
+                sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
+              } else {
+                sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
+              }
+              db.query(sql4, [
+                business_id,
+                description,
+                day ? day : null, // null here instead of in statement to make each call have 5 wildcards 
+                starts,
+                ends,
+              ],
+                (err, results) => {
+                  if (err) { console.error(err.stack) }
                 })
-              })
-            }
-            // If the user provided any deals, insert them into the database
-            if (request.body.deals) {
-              const deals = await JSON.parse(request.body.deals)
-              const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
-              deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
-                db.query(sql4, [
-                  BID,
-                  description,
-                  type, day,
-                  start_time,
-                  end_time,
-                  start_datetime,
-                  end_datetime
-                ],
-                  (err, results) => {
-                    if (err) return response.json({ error: err })
-                  })
-              })
-            }
-            // Insert business hours of operation into the database
-            //const hours = await JSON.parse(request.body.hours)
-            //const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
-            //hours.forEach(({ day, open_time, close_time }) => {
-            //  db.query(sql5, [BID, day, open_time, close_time], (err, results) => {
-            //    if (err) return response.json({ error: err })
-            //  })
-            //})
-            response.status(200).json('Business Updated')
+            })
+          }
+
+          // Update business hours of operation
+          const hours = await JSON.parse(request.body.hours)
+          const sql5 = 'CALL updateBusinessHours(?,?,?,?)'
+          hours.forEach(({ day, starts, ends }) => {
+            db.query(sql5, [business_id, day, starts, ends], (err, results) => {
+              if (err) return response.json({ error: err })
+            })
           })
-      })
+          response.status(200).json('Business Updated')
+        })
     } catch (err) {
       response.status(422).json({ error: err })
     }
